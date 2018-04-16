@@ -1,16 +1,8 @@
 package main;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -18,7 +10,6 @@ public class GUI extends JFrame{
 
     private Game game;
     private ArrayList<BoardState> possibleMoves;
-
 
     // gui components
     private JPanel contentPane;
@@ -31,7 +22,7 @@ public class GUI extends JFrame{
 
     private void start(){
         game = new Game();
-        possibleMoves = new ArrayList<BoardState>();
+        possibleMoves = new ArrayList<>();
         setup();
     }
 
@@ -46,6 +37,9 @@ public class GUI extends JFrame{
         this.setVisible(true);
     }
 
+    /**
+     * Updates the checkerboard GUI based on the game state.
+     */
     private void updateCheckerBoard(){
         GridBagConstraints c = new GridBagConstraints();
         contentPane = new JPanel(new GridBagLayout());
@@ -57,75 +51,46 @@ public class GUI extends JFrame{
             contentPane.add(squares[i], c);
         }
         addPieces();
-        addGhostPieces();
+        addGhostButtons();
         this.setContentPane(contentPane);
         this.pack();
         this.setVisible(true);
     }
 
-    private void addGhostPieces(){
-        for (BoardState state : possibleMoves){
-            int newPos = state.getNewPos();
-            BufferedImage buttonIcon = null;
-            try{
-                buttonIcon = ImageIO.read(new File("images/dottedcircle2.png"));
-            }
-            catch (IOException e){
-                System.out.println(e.toString());
-            }
-            if (buttonIcon != null){
-                Image resized = buttonIcon.getScaledInstance(65, 50,100);
-                GhostButton button = new GhostButton(state, new ImageIcon(resized));
-                button.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        onGhostButtonClick(actionEvent);
-                    }
-                });
-                squares[newPos].add(button);
-            }
-        }
-
-    }
-
+    /**
+     * Add checker pieces to the GUI corresponding to the game state
+     */
     private void addPieces(){
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
             if(game.getState().getPiece(i) != null){
-                BufferedImage buttonIcon = null;
-                if (game.getState().getPiece(i) == Piece.BLACK){
-                    try{
-                        buttonIcon = ImageIO.read(new File("images/blackchecker.png"));
+                CheckerButton button = new CheckerButton(i, game.getState().getPiece(i));
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        onPieceClick(actionEvent);
                     }
-                    catch (IOException e){
-                        System.out.println(e.toString());
-                    }
-                }
-                else if (game.getState().getPiece(i) == Piece.WHITE){
-                    try{
-                        buttonIcon = ImageIO.read(new File("images/whitechecker.gif"));
-                    }
-                    catch (IOException e) {
-                        System.out.println(e.toString());
-                    }
-                }
-                else{
-                    throw new ValueException("Invalid Piece enum (must be Black or White) ");
-                }
-                if (buttonIcon != null){
-                    Image resized = buttonIcon.getScaledInstance(squares[i].WIDTH-10, squares[i].HEIGHT-10,squares[i].HEIGHT-5);
-                    CheckerButton button = new CheckerButton(i, game.getState().getPiece(i), new ImageIcon(resized));
-                    button.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent actionEvent) {
-                            onPieceClick(actionEvent);
-                        }
-                    });
-                    squares[i].add(button);
-                }
+                });
+                squares[i].add(button);
             }
         }
     }
 
+    /**
+     * Add "ghost buttons" showing possible moves for the player
+     */
+    private void addGhostButtons(){
+        for (BoardState state : possibleMoves){
+            int newPos = state.getNewPos();
+            GhostButton button = new GhostButton(state);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    onGhostButtonClick(actionEvent);
+                }
+            });
+            squares[newPos].add(button);
+        }
+    }
 
     /**
      * Sets up the menu bar component.
@@ -215,7 +180,7 @@ public class GUI extends JFrame{
     }
 
     /**
-     * Opens a yes/no dialog box, allowing the user to choose whether or not to restart the game.
+     * Open dialog for restarting the program.
      */
     private void onRestartClick()
     {
@@ -233,6 +198,9 @@ public class GUI extends JFrame{
         }
     }
 
+    /**
+     * Open dialog for quitting the program
+     */
     private void onExitClick(){
         Object[] options = {"Yes",
                 "No", };
@@ -251,10 +219,16 @@ public class GUI extends JFrame{
         }
     }
 
+    /**
+     * Open help dialog.
+     */
     private void onHelpClick(){
 
     }
 
+    /**
+     * Undo the last move
+     */
     private void onUndoClick(){
         game.undo();
         updateCheckerBoard();
