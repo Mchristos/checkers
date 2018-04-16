@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,6 +17,7 @@ import javax.swing.*;
 public class GUI extends JFrame{
 
     private Game game;
+    private ArrayList<BoardState> possibleMoves;
 
 
     // gui components
@@ -29,6 +31,7 @@ public class GUI extends JFrame{
 
     private void start(){
         game = new Game();
+        possibleMoves = new ArrayList<BoardState>();
         setup();
     }
 
@@ -54,9 +57,35 @@ public class GUI extends JFrame{
             contentPane.add(squares[i], c);
         }
         addPieces();
+        addGhostPieces();
         this.setContentPane(contentPane);
         this.pack();
         this.setVisible(true);
+    }
+
+    private void addGhostPieces(){
+        for (BoardState state : possibleMoves){
+            int newPos = state.getNewPos();
+            BufferedImage buttonIcon = null;
+            try{
+                buttonIcon = ImageIO.read(new File("images/dottedcircle2.png"));
+            }
+            catch (IOException e){
+                System.out.println(e.toString());
+            }
+            if (buttonIcon != null){
+                Image resized = buttonIcon.getScaledInstance(65, 50,100);
+                GhostButton button = new GhostButton(state, new ImageIcon(resized));
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        onGhostButtonClick(actionEvent);
+                    }
+                });
+                squares[newPos].add(button);
+            }
+        }
+
     }
 
     private void addPieces(){
@@ -155,21 +184,35 @@ public class GUI extends JFrame{
         this.setJMenuBar(menuBar);
     }
 
+    /***************************************************************/
+    /*********************** ON CLICK METHODS **********************/
+
+    /**
+     * Occurs when user clicks on checker piece
+     * @param actionEvent
+     */
     private void onPieceClick(ActionEvent actionEvent){
         CheckerButton button = (CheckerButton) actionEvent.getSource();
         int pos = button.getPosition();
         Piece piece = button.getType();
         ArrayList<BoardState> successors = this.game.getState().getSuccessors(piece, pos);
-        if (successors.size() > 0){
-            Random rand = new Random();
-            int randint = rand.nextInt(successors.size());
-            game.updateState(successors.get(randint));
-            updateCheckerBoard();
+        possibleMoves = new ArrayList<>();
+        for (BoardState successor : successors){
+            possibleMoves.add(successor);
         }
+        updateCheckerBoard();
     }
 
-
-
+    /**
+     * Occurs when user clicks to move checker piece to new (ghost) location.
+     * @param actionEvent
+     */
+    private void onGhostButtonClick(ActionEvent actionEvent){
+        GhostButton button = (GhostButton) actionEvent.getSource();
+        game.updateState(button.getBoardstate());
+        possibleMoves = new ArrayList<>();
+        updateCheckerBoard();
+    }
 
     /**
      * Opens a yes/no dialog box, allowing the user to choose whether or not to restart the game.

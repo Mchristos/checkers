@@ -9,6 +9,8 @@ public class BoardState {
     public static final int SIDE_LENGTH = 8;
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
     Piece[] state;
+    // stores the position that was moved to to reach this state
+    private int newPos;
 
     public BoardState(){
         state = new Piece[BoardState.NO_SQUARES];
@@ -110,9 +112,13 @@ public class BoardState {
                 if (getPiece(newy, newx) == null) {
                     int newpos = 8*newy + newx;
                     BoardState newState = this.deepCopy();
+                    // move piece
                     newState.state[position] = null;
                     newState.state[newpos] = piece;
+                    // store position moved to
+                    newState.newPos = newpos;
                     if (jump){
+                        // remove captured piece
                         newState.state[newpos - SIDE_LENGTH*dy - dx] = null;
                     }
                     result.add(newState);
@@ -121,6 +127,15 @@ public class BoardState {
         }
         return result;
     }
+
+    /**
+     * Gets the destination position of the most recent move to get to this state.
+     * @return
+     */
+    public int getNewPos(){
+        return this.newPos;
+    }
+
 
     /**
      * Get piece at given position.

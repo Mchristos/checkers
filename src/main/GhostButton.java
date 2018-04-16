@@ -10,24 +10,17 @@ import java.io.IOException;
 /**
  * Black or white checker piece (clickable button component)
  */
-public class CheckerButton extends JButton{
-    private int position;
-    private Piece type;
+public class GhostButton extends JButton{
+    private BoardState boardstate;
 
-    public CheckerButton(int position,Piece type, ImageIcon image){
+    public GhostButton(BoardState state, ImageIcon image){
         super(image);
-        this.position = position;
-        this.type = type;
+        this.boardstate = state;
         this.setBorder(BorderFactory.createEmptyBorder());
         this.setContentAreaFilled(false);
     }
 
-    public int getPosition() {
-        return position;
+    public BoardState getBoardstate() {
+        return boardstate;
     }
-
-    public Piece getType() {
-        return type;
-    }
-
 }
