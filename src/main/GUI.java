@@ -115,10 +115,13 @@ public class GUI extends JFrame{
         );
         // initialize components
         JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("File");
+        JMenu fileMenu = new JMenu("File");
         JMenuItem restartItem = new JMenuItem("Restart");
         JMenuItem helpItem = new JMenuItem("Help");
         JMenuItem quitItem = new JMenuItem("Quit");
+        JMenu editMenu = new JMenu("Edit");
+        JMenuItem undoItem = new JMenuItem("Undo");
+
         // add action listeners
         quitItem.addActionListener(new ActionListener() {
             @Override
@@ -138,9 +141,17 @@ public class GUI extends JFrame{
                 onHelpClick();
             }
         });
+        undoItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                onUndoClick();
+            }
+        });
         // add components to menu bar
-        menu.add(restartItem); menu.add(helpItem); menu.add(quitItem);
-        menuBar.add(menu);
+        fileMenu.add(restartItem); fileMenu.add(helpItem); fileMenu.add(quitItem);
+        menuBar.add(fileMenu);
+        editMenu.add(undoItem);
+        menuBar.add(editMenu);
         this.setJMenuBar(menuBar);
     }
 
@@ -199,5 +210,10 @@ public class GUI extends JFrame{
 
     private void onHelpClick(){
 
+    }
+
+    private void onUndoClick(){
+        game.undo();
+        updateCheckerBoard();
     }
 }
