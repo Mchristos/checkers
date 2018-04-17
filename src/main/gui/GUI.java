@@ -1,14 +1,11 @@
 package main.gui;
 
-import main.enums.*;
 import main.game.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
-
-
 
 public class GUI extends JFrame{
 
@@ -66,8 +63,9 @@ public class GUI extends JFrame{
      */
     private void addPieces(){
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
-            if(game.getState().getPiece(i) != null){
-                CheckerButton button = new CheckerButton(i, game.getState().getPiece(i));
+            if(game.getState().getPlayer(i) != null){
+                Player player = game.getState().getPlayer(i);
+                CheckerButton button = new CheckerButton(i, player);
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -163,8 +161,8 @@ public class GUI extends JFrame{
     private void onPieceClick(ActionEvent actionEvent){
         CheckerButton button = (CheckerButton) actionEvent.getSource();
         int pos = button.getPosition();
-        Piece piece = button.getType();
-        ArrayList<BoardState> successors = this.game.getState().getSuccessors(piece, pos);
+        Player player = button.getPlayer();
+        ArrayList<BoardState> successors = this.game.getState().getSuccessors(player, pos);
         possibleMoves = new ArrayList<>();
         for (BoardState successor : successors){
             possibleMoves.add(successor);

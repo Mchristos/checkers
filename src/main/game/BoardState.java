@@ -1,6 +1,5 @@
 package main.game;
 
-import main.enums.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.ArrayList;
 
@@ -8,12 +7,12 @@ public class BoardState {
 
     public static final int SIDE_LENGTH = 8;
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
-    Piece[] state;
+    Player[] state;
     // stores the position that was moved to to reach this state
     private int newPos;
 
     public BoardState(){
-        state = new Piece[BoardState.NO_SQUARES];
+        state = new Player[BoardState.NO_SQUARES];
     }
 
     /**
@@ -26,13 +25,13 @@ public class BoardState {
             int x = i % SIDE_LENGTH;
             // place on black squares only
             if ((x + y) % 2 == 1 ){
-                // black pieces in first 3 rows
+                // AI pieces in first 3 rows
                 if (y < 3){
-                    bs.state[i] = Piece.BLACK;
+                    bs.state[i] = Player.AI;
                 }
-                // white pieces in last 3 rows
+                // Human pieces in last 3 rows
                 else if (y > 4){
-                    bs.state[i] = Piece.WHITE;
+                    bs.state[i] = Player.HUMAN;
                 }
             }
         }
@@ -52,20 +51,12 @@ public class BoardState {
      * @param player
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Piece player){
+    public ArrayList<BoardState> getSuccessors(Player player){
         ArrayList<BoardState> result = new ArrayList<>();
-        if (player == Piece.BLACK){
-            for (int i = 0; i <state.length; i++){
-                if(state[i] == Piece.BLACK){
-                    result.addAll(getSuccessors(player, i));
-                }
+        for (int i = 0; i < this.state.length; i++){
+            if(state[i] == player){
+                result.addAll(getSuccessors(player, i));
             }
-        }
-        else if (player == Piece.WHITE){
-            throw new NotImplementedException();
-        }
-        else{
-            throw new IllegalArgumentException("Argument must be either WHITE or BLACK.");
         }
         return result;
     }
@@ -76,8 +67,8 @@ public class BoardState {
      * @param position
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Piece piece, int position){
-        if (this.getPiece(position) != piece){
+    public ArrayList<BoardState> getSuccessors(Player player, int position){
+        if (this.getPlayer(position) != player){
             throw new IllegalArgumentException("No such piece at that position");
         }
         ArrayList<BoardState> result = new ArrayList<>();
@@ -85,15 +76,13 @@ public class BoardState {
         int x = position % SIDE_LENGTH;
         int[] dxs = new int[]{-1,1};
         int dy = -10;
-        switch (piece){
-            case BLACK:
+        switch (player){
+            case AI:
                 dy = 1;
                 break;
-            case WHITE:
+            case HUMAN:
                 dy = -1;
                 break;
-            case DEFAULT:
-                throw new IllegalArgumentException("Invalid piece");
         }
         for (int dx : dxs){
             int newx = x + dx;
@@ -101,7 +90,7 @@ public class BoardState {
             boolean jump = false;
             if (isValid(newy, newx)) {
                 // JUMP
-                if (getPiece(newy, newx) == getOpposite(piece)) {
+                if (getPlayer(newy, newx) == player.getOpposite() ) {
                     jump = true;
                     newx = newx + dx;
                     newy = newy + dy;
@@ -109,12 +98,12 @@ public class BoardState {
             }
             if (isValid(newy, newx)) {
                 // PLACE PIECE
-                if (getPiece(newy, newx) == null) {
+                if (getPlayer(newy, newx) == null) {
                     int newpos = 8*newy + newx;
                     BoardState newState = this.deepCopy();
                     // move piece
                     newState.state[position] = null;
-                    newState.state[newpos] = piece;
+                    newState.state[newpos] = player;
                     // store position moved to
                     newState.newPos = newpos;
                     if (jump){
@@ -138,11 +127,11 @@ public class BoardState {
 
 
     /**
-     * Get piece at given position.
+     * Get player piece at given position.
      * @param i Position in board.
      * @return
      */
-    public Piece getPiece(int i){
+    public Player getPlayer(int i){
         return state[i];
     }
 
@@ -152,8 +141,8 @@ public class BoardState {
      * @param x
      * @return
      */
-    public Piece getPiece(int y, int x){
-        return getPiece(8*y + x);
+    public Player getPlayer(int y, int x){
+        return getPlayer(8*y + x);
     }
 
     /**
@@ -165,18 +154,5 @@ public class BoardState {
     public boolean isValid(int y, int x){
         return (0 <= y) && (y < SIDE_LENGTH) && (0 <= x) && (x < SIDE_LENGTH);
     }
-
-    private static Piece getOpposite(Piece p){
-        if(p == Piece.WHITE){
-            return Piece.BLACK;
-        }
-        else if (p == Piece.BLACK){
-            return Piece.WHITE;
-        }
-        else{
-            throw new IllegalArgumentException("Invalid piece");
-        }
-    }
-
 
 }

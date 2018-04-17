@@ -1,7 +1,7 @@
 package main.gui;
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
-import main.enums.*;
+import main.game.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,29 +16,30 @@ import java.io.IOException;
 public class CheckerButton extends JButton{
 
     private int position;
-    private Piece type;
+    private Player player;
     public final int WIDTH = 50;
     public final int HEIGHT = 50;
 
-    public CheckerButton(int position, Piece type){
+    public CheckerButton(int position, Player player){
         super();
         this.position = position;
-        this.type = type;
+        this.player = player;
         this.setBorder(BorderFactory.createEmptyBorder());
         this.setContentAreaFilled(false);
-        setIcon();
+        setIcon(player);
     }
 
     public int getPosition() {
         return position;
     }
 
-    public Piece getType() {
-        return type;
+    public Player getPlayer() {
+        return player;
     }
 
-    private void setIcon(){
+    private void setIcon(Player player){
         BufferedImage buttonIcon = null;
+        Piece type = Settings.getPiece(this.player);
         if (type == Piece.BLACK){
             try {
                 buttonIcon = ImageIO.read(new File("images/blackchecker.png"));
