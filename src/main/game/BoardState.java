@@ -99,7 +99,7 @@ public class BoardState {
             if (isValid(newy, newx)) {
                 // PLACE PIECE
                 if (getPlayer(newy, newx) == null) {
-                    int newpos = 8*newy + newx;
+                    int newpos = SIDE_LENGTH*newy + newx;
                     BoardState newState = this.deepCopy();
                     // move piece
                     newState.state[position] = null;
@@ -142,7 +142,7 @@ public class BoardState {
      * @return
      */
     public Player getPlayer(int y, int x){
-        return getPlayer(8*y + x);
+        return getPlayer(SIDE_LENGTH*y + x);
     }
 
     /**
