@@ -5,6 +5,7 @@ import main.game.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
 public class GUI extends JFrame{
@@ -176,8 +177,16 @@ public class GUI extends JFrame{
      */
     private void onGhostButtonClick(ActionEvent actionEvent){
         GhostButton button = (GhostButton) actionEvent.getSource();
-        game.updateState(button.getBoardstate());
+        game.playerMove(button.getBoardstate());
         possibleMoves = new ArrayList<>();
+        updateCheckerBoard();
+//        try{
+//            TimeUnit.SECONDS.sleep(4);
+//        }
+//        catch (InterruptedException e){
+//            System.out.println(e.toString());
+//        }
+        game.aiMove();
         updateCheckerBoard();
     }
 
