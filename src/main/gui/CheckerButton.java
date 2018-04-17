@@ -1,6 +1,7 @@
-package main;
+package main.gui;
 
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
+import main.enums.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

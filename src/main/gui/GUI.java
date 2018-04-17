@@ -1,9 +1,13 @@
-package main;
+package main.gui;
+
+import main.enums.*;
+import main.game.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import javax.swing.*;
+
 
 
 public class GUI extends JFrame{

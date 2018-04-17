@@ -1,4 +1,4 @@
-package main;
+package main.enums;
 
 public enum Piece {
     WHITE,

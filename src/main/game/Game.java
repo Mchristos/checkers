@@ -1,15 +1,27 @@
-package main;
+package main.game;
 
 import java.util.Stack;
 
-public class Game {
+public class Game{
 
     private Stack<BoardState> state;
     private final int memory = 5;
+    private int player; // 0 == AI, 1 == human
+    private boolean done;
 
     public Game(){
         state = new Stack<>();
         state.push(BoardState.InitialState());
+//        done = false;
+//        player = Settings.startingPlayer;
+//        while(!done){
+//            if(player == 0){
+//
+//            }
+//            if(player == 1){
+//
+//            }
+//        }
     }
 
     public void updateState(BoardState newState){

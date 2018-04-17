@@ -1,7 +1,7 @@
-package main;
+package main.game;
 
+import main.enums.*;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.ArrayList;
 
 public class BoardState {
