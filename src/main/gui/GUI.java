@@ -180,15 +180,20 @@ public class GUI extends JFrame{
         game.playerMove(button.getBoardstate());
         possibleMoves = new ArrayList<>();
         updateCheckerBoard();
-//        try{
-//            TimeUnit.SECONDS.sleep(4);
-//        }
-//        catch (InterruptedException e){
-//            System.out.println(e.toString());
-//        }
-        game.aiMove();
-        updateCheckerBoard();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                game.aiMove();
+                try{
+                    TimeUnit.MILLISECONDS.sleep(500);
+                }
+                catch (InterruptedException e){
+                    System.out.println(e.toString());
+                }
+                updateCheckerBoard();
+            }
+        });
     }
+
 
     /**
      * Open dialog for restarting the program.
