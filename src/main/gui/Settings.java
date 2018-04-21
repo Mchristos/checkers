@@ -3,7 +3,7 @@ package main.gui;
 import main.game.Player;
 
 public class Settings{
-    public static Piece AIcolour = Piece.BLACK; // Note: starting player gets black pieces
+    public static Colour AIcolour = Colour.BLACK; // Note: starting player gets black pieces
 
     public static int squareSize = 80;
     public static int checkerWidth = 5*squareSize/6;
@@ -17,8 +17,8 @@ public class Settings{
      * @param player
      * @return
      */
-    public static Piece getPiece(Player player){
-        Piece result = null;
+    public static Colour getPiece(Player player){
+        Colour result = null;
         if (player == Player.AI){
             result = Settings.AIcolour;
         }

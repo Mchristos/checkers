@@ -37,8 +37,8 @@ public class CheckerButton extends JButton{
 
     private void setIcon(Player player){
         BufferedImage buttonIcon = null;
-        Piece type = Settings.getPiece(this.player);
-        if (type == Piece.BLACK){
+        Colour type = Settings.getPiece(this.player);
+        if (type == Colour.BLACK){
             try {
                 buttonIcon = ImageIO.read(new File("images/blackchecker.png"));
             }
@@ -46,7 +46,7 @@ public class CheckerButton extends JButton{
                 System.out.println(e.toString());
             }
         }
-        else if (type == Piece.WHITE){
+        else if (type == Colour.WHITE){
             try {
                 buttonIcon = ImageIO.read(new File("images/whitechecker.gif"));
             }
@@ -55,7 +55,7 @@ public class CheckerButton extends JButton{
             }
         }
         else{
-            throw new ValueException("Invalid Piece enum (must be Black or White) ");
+            throw new ValueException("Invalid Colour enum (must be Black or White) ");
         }
         if (buttonIcon != null){
             Image resized = buttonIcon.getScaledInstance(Settings.checkerWidth,Settings.checkerHeight,100);

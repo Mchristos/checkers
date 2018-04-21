@@ -1,6 +1,7 @@
 package main.gui;
 
 import main.game.*;
+import main.game.Settings;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -37,6 +38,9 @@ public class GUI extends JFrame{
         updateCheckerBoard();
         this.pack();
         this.setVisible(true);
+        if (Settings.FIRSTMOVE == Player.AI){
+            aiMove();
+        }
     }
 
     /**
@@ -176,6 +180,10 @@ public class GUI extends JFrame{
         game.playerMove(button.getBoardstate());
         possibleMoves = new ArrayList<>();
         updateCheckerBoard();
+        aiMove();
+    }
+
+    private void aiMove(){
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 game.aiMove();
@@ -189,6 +197,7 @@ public class GUI extends JFrame{
             }
         });
     }
+
 
 
     /**
