@@ -1,12 +1,13 @@
 package main.game;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Stack;
 
 public class Game{
 
     private Stack<BoardState> state;
     private final int memory = 5;
-    private int player; // 0 == AI, 1 == human
     private AI ai;
 
     public Game(){
@@ -20,6 +21,7 @@ public class Game{
     }
 
     public void aiMove(){
+        // update state with AI move
         BoardState newState = ai.move(this.state.peek());
         updateState(newState);
     }
@@ -35,8 +37,13 @@ public class Game{
         return state.peek();
     }
 
+    public ArrayList<BoardState> getValidMoves(Player player, int pos) {
+        return state.peek().getSuccessors(player, pos);
+    }
+
     public void undo(){
-        if (state.size() > 1){
+        if (state.size() > 2){
+            state.pop();
             state.pop();
         }
     }

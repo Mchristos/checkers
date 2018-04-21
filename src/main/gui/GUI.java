@@ -83,7 +83,7 @@ public class GUI extends JFrame{
      */
     private void addGhostButtons(){
         for (BoardState state : possibleMoves){
-            int newPos = state.getNewPos();
+            int newPos = state.getToPos();
             GhostButton button = new GhostButton(state);
             button.addActionListener(new ActionListener() {
                 @Override
@@ -163,11 +163,7 @@ public class GUI extends JFrame{
         CheckerButton button = (CheckerButton) actionEvent.getSource();
         int pos = button.getPosition();
         Player player = button.getPlayer();
-        ArrayList<BoardState> successors = this.game.getState().getSuccessors(player, pos);
-        possibleMoves = new ArrayList<>();
-        for (BoardState successor : successors){
-            possibleMoves.add(successor);
-        }
+        possibleMoves = game.getValidMoves(player, pos);
         updateCheckerBoard();
     }
 

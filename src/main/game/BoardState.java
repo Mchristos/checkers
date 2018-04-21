@@ -1,6 +1,5 @@
 package main.game;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.ArrayList;
 
 public class BoardState {
@@ -8,8 +7,10 @@ public class BoardState {
     public static final int SIDE_LENGTH = 8;
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
     Player[] state;
-    // stores the position that was moved to to reach this state
-    private int newPos;
+    // stores the destination position of the most recent move to get to this state.
+    private int fromPos;
+    private int toPos;
+    private boolean jumped;
 
     public BoardState(){
         state = new Player[BoardState.NO_SQUARES];
@@ -38,7 +39,7 @@ public class BoardState {
         return bs;
     }
 
-    public BoardState deepCopy(){
+    private BoardState deepCopy(){
         BoardState bs = new BoardState();
         for (int i = 0; i < bs.state.length; i++){
             bs.state[i] = this.state[i];
@@ -47,35 +48,89 @@ public class BoardState {
     }
 
     /**
-     * Get successor states depending on which player's turn it is.
+     * Gets valid successor states for a player
      * @param player
      * @return
      */
     public ArrayList<BoardState> getSuccessors(Player player){
+        // compute jump successors
+        ArrayList<BoardState> successors = getSuccessors(player, true);
+        if (Settings.FORCETAKES){
+            if (successors.size() > 0){
+                // return only jump successors if available (forced)
+                return  successors;
+            }
+            else{
+                // return non-jump successors (since no jumps available)
+                return getSuccessors(player, false);
+            }
+        }
+        else{
+            // return jump and non-jump successors
+            successors.addAll(getSuccessors(player, false));
+            return successors;
+        }
+    }
+
+    /**
+     * Get valid jump or non-jump successor states for a player
+     * @param player
+     * @param jump
+     * @return
+     */
+    public ArrayList<BoardState> getSuccessors(Player player, boolean jump){
         ArrayList<BoardState> result = new ArrayList<>();
         for (int i = 0; i < this.state.length; i++){
             if(state[i] == player){
-                result.addAll(getSuccessors(player, i));
+                result.addAll(getSuccessors(player, i, jump));
             }
         }
         return result;
     }
 
+
     /**
-     * Get valid successor states associated with a particular piece on the board
-     * @param piece
-     * @param position
+     * Gets valid successor states for a specific piece on the board
+     * @param player
+     * @param position position of piece
      * @return
      */
     public ArrayList<BoardState> getSuccessors(Player player, int position){
+        if (Settings.FORCETAKES){
+            // compute jump successors GLOBALLY
+            ArrayList<BoardState> jumps = getSuccessors(player, true);
+            if (jumps.size() > 0){
+                // return only jump successors if available (forced)
+                return getSuccessors(player, position, true);
+            }
+            else{
+                // return non-jump successors (since no jumps available)
+                return getSuccessors(player, position, false);
+            }
+        }
+        else{
+            // return jump and non-jump successors
+            ArrayList<BoardState> result = new ArrayList<>();
+            result.addAll(getSuccessors(player, position, true));
+            result.addAll(getSuccessors(player, position, false));
+            return result;
+        }
+    }
+
+    /**
+     * Get valid jump or non-jump successor states for a specific piece on the board.
+     * @param player
+     * @param position
+     * @return
+     */
+    public ArrayList<BoardState> getSuccessors(Player player, int position, boolean jump){
         if (this.getPlayer(position) != player){
             throw new IllegalArgumentException("No such piece at that position");
         }
-        ArrayList<BoardState> result = new ArrayList<>();
         int y = position / SIDE_LENGTH;
         int x = position % SIDE_LENGTH;
-        int[] dxs = new int[]{-1,1};
-        int dy = -10;
+        int[] dxs = new int[]{-1, 1};
+        int dy = -100000;
         switch (player){
             case AI:
                 dy = 1;
@@ -84,33 +139,72 @@ public class BoardState {
                 dy = -1;
                 break;
         }
+        if(jump){
+            return jumpSuccessors(player, position, dxs, dy);
+        }
+        else{
+            return nonJumpSuccessors(player, position, dxs, dy);
+        }
+    }
+
+    private ArrayList<BoardState> nonJumpSuccessors(Player player, int position, int[] dxs, int dy){
+        ArrayList<BoardState> result = new ArrayList<>();
+        int y = position / SIDE_LENGTH;
+        int x = position % SIDE_LENGTH;
         for (int dx : dxs){
-            int newx = x + dx;
-            int newy = y + dy;
-            boolean jump = false;
-            if (isValid(newy, newx)) {
-                // JUMP
-                if (getPlayer(newy, newx) == player.getOpposite() ) {
-                    jump = true;
-                    newx = newx + dx;
-                    newy = newy + dy;
-                }
-            }
-            if (isValid(newy, newx)) {
-                // PLACE PIECE
-                if (getPlayer(newy, newx) == null) {
-                    int newpos = SIDE_LENGTH*newy + newx;
+            int newX = x + dx;
+            int newY = y + dy;
+            // new position valid?
+            if (isValid(newY, newX)) {
+                // new position available?
+                if (getPlayer(newY, newX) == null) {
+                    int newpos = SIDE_LENGTH*newY + newX;
                     BoardState newState = this.deepCopy();
                     // move piece
                     newState.state[position] = null;
                     newState.state[newpos] = player;
-                    // store position moved to
-                    newState.newPos = newpos;
-                    if (jump){
-                        // remove captured piece
-                        newState.state[newpos - SIDE_LENGTH*dy - dx] = null;
-                    }
+                    // store meta data
+                    newState.fromPos = position;
+                    newState.toPos = newpos;
+                    newState.jumped = false;
                     result.add(newState);
+                }
+            }
+        }
+        return result;
+    }
+
+
+    private ArrayList<BoardState> jumpSuccessors(Player player, int position, int[] dxs, int dy){
+        ArrayList<BoardState> result = new ArrayList<>();
+        int y = position / SIDE_LENGTH;
+        int x = position % SIDE_LENGTH;
+        for (int dx : dxs){
+            int newX = x + dx;
+            int newY = y + dy;
+            // new position valid?
+            if (isValid(newY, newX)) {
+                // new position contain opposite player?
+                if (getPlayer(newY, newX) == player.getOpposite() ) {
+                    newX = newX + dx; newY = newY + dy;
+                    // jump position valid?
+                    if (isValid(newY, newX)){
+                        // jump position available?
+                        if (getPlayer(newY,newX) == null) {
+                            int newpos = SIDE_LENGTH*newY + newX;
+                            BoardState newState = this.deepCopy();
+                            // move piece
+                            newState.state[position] = null;
+                            newState.state[newpos] = player;
+                            // store meta data
+                            newState.fromPos = position;
+                            newState.toPos = newpos;
+                            newState.jumped = true;
+                            // remove captured piece
+                            newState.state[newpos - SIDE_LENGTH*dy - dx] = null;
+                            result.add(newState);
+                        }
+                    }
                 }
             }
         }
@@ -121,8 +215,8 @@ public class BoardState {
      * Gets the destination position of the most recent move to get to this state.
      * @return
      */
-    public int getNewPos(){
-        return this.newPos;
+    public int getToPos(){
+        return this.toPos;
     }
 
 
