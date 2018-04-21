@@ -13,11 +13,11 @@ public class Settings{
 
 
     /**
-     * Gets the correct piece type (black/white) for the given player
+     * Gets the correct colour (black/white) for the given player
      * @param player
      * @return
      */
-    public static Colour getPiece(Player player){
+    public static Colour getColour(Player player){
         Colour result = null;
         if (player == Player.AI){
             result = Settings.AIcolour;

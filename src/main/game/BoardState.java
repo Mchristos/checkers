@@ -6,14 +6,14 @@ public class BoardState {
 
     public static final int SIDE_LENGTH = 8;
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
-    Player[] state;
+    Piece[] state;
     // stores the destination position of the most recent move to get to this state.
     private int fromPos;
     private int toPos;
     private boolean jumped;
 
     public BoardState(){
-        state = new Player[BoardState.NO_SQUARES];
+        state = new Piece[BoardState.NO_SQUARES];
     }
 
     /**
@@ -28,11 +28,11 @@ public class BoardState {
             if ((x + y) % 2 == 1 ){
                 // AI pieces in first 3 rows
                 if (y < 3){
-                    bs.state[i] = Player.AI;
+                    bs.state[i] = new Piece(Player.AI, false);
                 }
                 // Human pieces in last 3 rows
                 else if (y > 4){
-                    bs.state[i] = Player.HUMAN;
+                    bs.state[i] = new Piece(Player.HUMAN, false);
                 }
             }
         }
@@ -81,8 +81,10 @@ public class BoardState {
     public ArrayList<BoardState> getSuccessors(Player player, boolean jump){
         ArrayList<BoardState> result = new ArrayList<>();
         for (int i = 0; i < this.state.length; i++){
-            if(state[i] == player){
-                result.addAll(getSuccessors(player, i, jump));
+            if (state[i] != null){
+                if(state[i].getPlayer() == player){
+                    result.addAll(getSuccessors(player, i, jump));
+                }
             }
         }
         return result;
@@ -124,85 +126,110 @@ public class BoardState {
      * @return
      */
     public ArrayList<BoardState> getSuccessors(Player player, int position, boolean jump){
-        if (this.getPlayer(position) != player){
+        if (this.getPiece(position).getPlayer() != player){
             throw new IllegalArgumentException("No such piece at that position");
         }
         int y = position / SIDE_LENGTH;
         int x = position % SIDE_LENGTH;
         int[] dxs = new int[]{-1, 1};
-        int dy = -100000;
-        switch (player){
-            case AI:
-                dy = 1;
-                break;
-            case HUMAN:
-                dy = -1;
-                break;
-        }
-        if(jump){
-            return jumpSuccessors(player, position, dxs, dy);
+        int[] dys = new int[]{};
+        Piece piece = this.state[position];
+        if (piece.isKing()){
+            dys = new int[]{-1,1};
         }
         else{
-            return nonJumpSuccessors(player, position, dxs, dy);
+            switch (piece.getPlayer()){
+                case AI:
+                    dys = new int[]{1};
+                    break;
+                case HUMAN:
+                    dys = new int[]{-1};
+                    break;
+            }
+        }
+        if(jump){
+            return jumpSuccessors(piece, position, dxs, dys);
+        }
+        else{
+            return nonJumpSuccessors(piece, position, dxs, dys);
         }
     }
 
-    private ArrayList<BoardState> nonJumpSuccessors(Player player, int position, int[] dxs, int dy){
+    private ArrayList<BoardState> nonJumpSuccessors(Piece piece, int position, int[] dxs, int[] dys){
         ArrayList<BoardState> result = new ArrayList<>();
         int y = position / SIDE_LENGTH;
         int x = position % SIDE_LENGTH;
         for (int dx : dxs){
-            int newX = x + dx;
-            int newY = y + dy;
-            // new position valid?
-            if (isValid(newY, newX)) {
-                // new position available?
-                if (getPlayer(newY, newX) == null) {
-                    int newpos = SIDE_LENGTH*newY + newX;
-                    BoardState newState = this.deepCopy();
-                    // move piece
-                    newState.state[position] = null;
-                    newState.state[newpos] = player;
-                    // store meta data
-                    newState.fromPos = position;
-                    newState.toPos = newpos;
-                    newState.jumped = false;
-                    result.add(newState);
+            for (int dy : dys){
+                int newX = x + dx;
+                int newY = y + dy;
+                // new position valid?
+                if (isValid(newY, newX)) {
+                    // new position available?
+                    if (getPiece(newY, newX) == null) {
+                        int newpos = SIDE_LENGTH*newY + newX;
+                        result.add(createNewState(position, newpos, piece, false, dy,dx));
+                    }
                 }
             }
         }
         return result;
     }
 
+    private BoardState createNewState(int oldPos, int newPos, Piece piece, boolean jumped, int dy, int dx){
+        // check if king position
+        if (isKingPosition(newPos, piece.getPlayer())){
+            piece = new Piece(piece.getPlayer(), true);
+        }
+        BoardState newState = this.deepCopy();
+        // move piece
+        newState.state[oldPos] = null;
+        newState.state[newPos] = piece;
+        // store meta data
+        newState.fromPos = oldPos;
+        newState.toPos = newPos;
+        newState.jumped = jumped;
+        if (jumped){
+            // remove captured piece
+            newState.state[newPos - SIDE_LENGTH*dy - dx] = null;
+        }
+        return newState;
+    }
 
-    private ArrayList<BoardState> jumpSuccessors(Player player, int position, int[] dxs, int dy){
+    private boolean isKingPosition(int pos, Player player){
+        int y = pos / SIDE_LENGTH;
+        if (y == 0 && player == Player.HUMAN){
+            return true;
+        }
+        else if (y == SIDE_LENGTH-1 && player == Player.AI){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+
+    private ArrayList<BoardState> jumpSuccessors(Piece piece, int position, int[] dxs, int[] dys){
         ArrayList<BoardState> result = new ArrayList<>();
         int y = position / SIDE_LENGTH;
         int x = position % SIDE_LENGTH;
         for (int dx : dxs){
-            int newX = x + dx;
-            int newY = y + dy;
-            // new position valid?
-            if (isValid(newY, newX)) {
-                // new position contain opposite player?
-                if (getPlayer(newY, newX) == player.getOpposite() ) {
-                    newX = newX + dx; newY = newY + dy;
-                    // jump position valid?
-                    if (isValid(newY, newX)){
-                        // jump position available?
-                        if (getPlayer(newY,newX) == null) {
-                            int newpos = SIDE_LENGTH*newY + newX;
-                            BoardState newState = this.deepCopy();
-                            // move piece
-                            newState.state[position] = null;
-                            newState.state[newpos] = player;
-                            // store meta data
-                            newState.fromPos = position;
-                            newState.toPos = newpos;
-                            newState.jumped = true;
-                            // remove captured piece
-                            newState.state[newpos - SIDE_LENGTH*dy - dx] = null;
-                            result.add(newState);
+            for (int dy : dys){
+                int newX = x + dx;
+                int newY = y + dy;
+                // new position valid?
+                if (isValid(newY, newX)) {
+                    // new position contain opposite player?
+                    if (getPiece(newY,newX) != null && getPiece(newY, newX).getPlayer() == piece.getPlayer().getOpposite() ) {
+                        newX = newX + dx; newY = newY + dy;
+                        // jump position valid?
+                        if (isValid(newY, newX)){
+                            // jump position available?
+                            if (getPiece(newY,newX) == null) {
+                                int newpos = SIDE_LENGTH*newY + newX;
+                                result.add(createNewState(position, newpos, piece, true, dy, dx));
+                            }
                         }
                     }
                 }
@@ -225,7 +252,7 @@ public class BoardState {
      * @param i Position in board.
      * @return
      */
-    public Player getPlayer(int i){
+    public Piece getPiece(int i){
         return state[i];
     }
 
@@ -235,8 +262,8 @@ public class BoardState {
      * @param x
      * @return
      */
-    public Player getPlayer(int y, int x){
-        return getPlayer(SIDE_LENGTH*y + x);
+    public Piece getPiece(int y, int x){
+        return getPiece(SIDE_LENGTH*y + x);
     }
 
     /**

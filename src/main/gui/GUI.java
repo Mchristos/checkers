@@ -68,9 +68,9 @@ public class GUI extends JFrame{
      */
     private void addPieces(){
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
-            if(game.getState().getPlayer(i) != null){
-                Player player = game.getState().getPlayer(i);
-                CheckerButton button = new CheckerButton(i, player);
+            if(game.getState().getPiece(i) != null){
+                Piece piece = game.getState().getPiece(i);
+                CheckerButton button = new CheckerButton(i, piece);
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
@@ -166,7 +166,7 @@ public class GUI extends JFrame{
     private void onPieceClick(ActionEvent actionEvent){
         CheckerButton button = (CheckerButton) actionEvent.getSource();
         int pos = button.getPosition();
-        Player player = button.getPlayer();
+        Player player = button.getPiece().getPlayer();
         possibleMoves = game.getValidMoves(player, pos);
         updateCheckerBoard();
     }
