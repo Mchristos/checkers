@@ -5,6 +5,13 @@ import main.game.Player;
 public class Settings{
     public static Piece AIcolour = Piece.BLACK; // Note: starting player gets black pieces
 
+    public static int squareSize = 80;
+    public static int checkerWidth = 5*squareSize/6;
+    public static int checkerHeight = 5*squareSize/6;
+    public static int ghostButtonWidth = 30*squareSize/29;
+    public static int ghostButtonHeight = 5*squareSize/6;
+
+
     /**
      * Gets the correct piece type (black/white) for the given player
      * @param player

@@ -17,8 +17,6 @@ public class CheckerButton extends JButton{
 
     private int position;
     private Player player;
-    public final int WIDTH = 50;
-    public final int HEIGHT = 50;
 
     public CheckerButton(int position, Player player){
         super();
@@ -60,7 +58,7 @@ public class CheckerButton extends JButton{
             throw new ValueException("Invalid Piece enum (must be Black or White) ");
         }
         if (buttonIcon != null){
-            Image resized = buttonIcon.getScaledInstance(WIDTH, HEIGHT,100);
+            Image resized = buttonIcon.getScaledInstance(Settings.checkerWidth,Settings.checkerHeight,100);
             ImageIcon icon = new ImageIcon(resized);
             this.setIcon(icon);
         }

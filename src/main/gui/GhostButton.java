@@ -15,8 +15,6 @@ import main.game.BoardState;
 public class GhostButton extends JButton{
 
     private BoardState boardstate;
-    public final int WIDTH =  65;
-    public final int HEIGHT = 50;
 
     public GhostButton(BoardState state){
         super();
@@ -35,7 +33,7 @@ public class GhostButton extends JButton{
             System.out.println(e.toString());
         }
         if (buttonIcon != null){
-            Image resized = buttonIcon.getScaledInstance(WIDTH,HEIGHT,100);
+            Image resized = buttonIcon.getScaledInstance(Settings.ghostButtonWidth,Settings.ghostButtonHeight,100);
             ImageIcon icon = new ImageIcon(resized);
             this.setIcon(icon);
         }
