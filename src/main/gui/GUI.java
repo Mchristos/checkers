@@ -34,6 +34,14 @@ public class GUI extends JFrame{
      */
     public void setup()
     {
+        switch (Settings.FIRSTMOVE){
+            case AI:
+                main.gui.Settings.AIcolour = Colour.WHITE;
+                break;
+            case HUMAN:
+                main.gui.Settings.AIcolour = Colour.BLACK;
+                break;
+        }
         setupMenuBar();
         updateCheckerBoard();
         this.pack();
