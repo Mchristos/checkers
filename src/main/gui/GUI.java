@@ -71,6 +71,16 @@ public class GUI extends JFrame{
         this.setVisible(true);
     }
 
+    private void updateLater(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateCheckerBoard();
+            }
+        });
+    }
+
+
     /**
      * Add checker pieces to the GUI corresponding to the game state
      */
@@ -174,9 +184,10 @@ public class GUI extends JFrame{
     private void onPieceClick(ActionEvent actionEvent){
         CheckerButton button = (CheckerButton) actionEvent.getSource();
         int pos = button.getPosition();
-        Player player = button.getPiece().getPlayer();
-        possibleMoves = game.getValidMoves(player, pos);
-        updateCheckerBoard();
+        if(button.getPiece().getPlayer() == Player.HUMAN){
+            possibleMoves = game.getValidMoves(Player.HUMAN, pos);
+            updateCheckerBoard();
+        }
     }
 
     /**
@@ -184,26 +195,31 @@ public class GUI extends JFrame{
      * @param actionEvent
      */
     private void onGhostButtonClick(ActionEvent actionEvent){
-        GhostButton button = (GhostButton) actionEvent.getSource();
-        game.playerMove(button.getBoardstate());
-        possibleMoves = new ArrayList<>();
-        updateCheckerBoard();
-        aiMove();
+        if (!game.isGameOver() && game.getTurn() == Player.HUMAN){
+            GhostButton button = (GhostButton) actionEvent.getSource();
+            game.playerMove(button.getBoardstate());
+            possibleMoves = new ArrayList<>();
+            updateCheckerBoard();
+            aiMove();
+        }
     }
 
     private void aiMove(){
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                game.aiMove();
-                try{
-                    TimeUnit.MILLISECONDS.sleep(500);
+        while (!game.isGameOver() && game.getTurn() == Player.AI){
+            game.aiMove();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    try{
+                        TimeUnit.MILLISECONDS.sleep(500);
+                    }
+                    catch (InterruptedException e){
+                        System.out.println(e.toString());
+                    }
+                    updateCheckerBoard();
                 }
-                catch (InterruptedException e){
-                    System.out.println(e.toString());
-                }
-                updateCheckerBoard();
-            }
-        });
+            });
+        }
     }
 
 

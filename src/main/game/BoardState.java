@@ -1,6 +1,10 @@
 package main.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.Stream;
 
 public class BoardState {
 
@@ -8,12 +12,15 @@ public class BoardState {
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
     Piece[] state;
     // stores the destination position of the most recent move to get to this state.
-    private int fromPos;
-    private int toPos;
-    private boolean jumped;
-
+    private int fromPos = -1;
+    private int toPos = -1;
+    private int doublejumpPos = -1;
+    private Player turn;
+    // track number of human/AI pieces on board
+    private HashMap<Player, Integer> pieceCount;
     public BoardState(){
         state = new Piece[BoardState.NO_SQUARES];
+        turn = Settings.FIRSTMOVE;
     }
 
     /**
@@ -36,6 +43,12 @@ public class BoardState {
                 }
             }
         }
+        // count initial pieces 
+        int aiCount = (int) Arrays.stream(bs.state).filter(x -> x != null).filter(x -> x.getPlayer() == Player.AI).count();
+        int humanCount = (int) Arrays.stream(bs.state).filter(x -> x != null).filter(x -> x.getPlayer() == Player.HUMAN).count();
+        bs.pieceCount = new HashMap<>();
+        bs.pieceCount.put(Player.AI, aiCount);
+        bs.pieceCount.put(Player.HUMAN,humanCount);
         return bs;
     }
 
@@ -129,38 +142,22 @@ public class BoardState {
         if (this.getPiece(position).getPlayer() != player){
             throw new IllegalArgumentException("No such piece at that position");
         }
-        int y = position / SIDE_LENGTH;
-        int x = position % SIDE_LENGTH;
-        int[] dxs = new int[]{-1, 1};
-        int[] dys = new int[]{};
         Piece piece = this.state[position];
-        if (piece.isKing()){
-            dys = new int[]{-1,1};
-        }
-        else{
-            switch (piece.getPlayer()){
-                case AI:
-                    dys = new int[]{1};
-                    break;
-                case HUMAN:
-                    dys = new int[]{-1};
-                    break;
-            }
-        }
         if(jump){
-            return jumpSuccessors(piece, position, dxs, dys);
+            return jumpSuccessors(piece, position);
         }
         else{
-            return nonJumpSuccessors(piece, position, dxs, dys);
+            return nonJumpSuccessors(piece, position);
         }
     }
 
-    private ArrayList<BoardState> nonJumpSuccessors(Piece piece, int position, int[] dxs, int[] dys){
+    private ArrayList<BoardState> nonJumpSuccessors(Piece piece, int position){
         ArrayList<BoardState> result = new ArrayList<>();
-        int y = position / SIDE_LENGTH;
         int x = position % SIDE_LENGTH;
-        for (int dx : dxs){
-            for (int dy : dys){
+        int y = position / SIDE_LENGTH;
+        // loop through allowed movement directions
+        for (int dx : piece.getXMovements()){
+            for (int dy : piece.getYMovements()){
                 int newX = x + dx;
                 int newY = y + dy;
                 // new position valid?
@@ -176,52 +173,23 @@ public class BoardState {
         return result;
     }
 
-    private BoardState createNewState(int oldPos, int newPos, Piece piece, boolean jumped, int dy, int dx){
-        // check if king position
-        if (isKingPosition(newPos, piece.getPlayer())){
-            piece = new Piece(piece.getPlayer(), true);
-        }
-        BoardState newState = this.deepCopy();
-        // move piece
-        newState.state[oldPos] = null;
-        newState.state[newPos] = piece;
-        // store meta data
-        newState.fromPos = oldPos;
-        newState.toPos = newPos;
-        newState.jumped = jumped;
-        if (jumped){
-            // remove captured piece
-            newState.state[newPos - SIDE_LENGTH*dy - dx] = null;
-        }
-        return newState;
-    }
-
-    private boolean isKingPosition(int pos, Player player){
-        int y = pos / SIDE_LENGTH;
-        if (y == 0 && player == Player.HUMAN){
-            return true;
-        }
-        else if (y == SIDE_LENGTH-1 && player == Player.AI){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-
-    private ArrayList<BoardState> jumpSuccessors(Piece piece, int position, int[] dxs, int[] dys){
+    private ArrayList<BoardState> jumpSuccessors(Piece piece, int position){
         ArrayList<BoardState> result = new ArrayList<>();
-        int y = position / SIDE_LENGTH;
+        // no other jump moves are valid while doing double jump
+        if (doublejumpPos > 0 && position != doublejumpPos){
+            return result;
+        }
         int x = position % SIDE_LENGTH;
-        for (int dx : dxs){
-            for (int dy : dys){
+        int y = position / SIDE_LENGTH;
+        // loop through allowed movement directions
+        for (int dx : piece.getXMovements()){
+            for (int dy : piece.getYMovements()){
                 int newX = x + dx;
                 int newY = y + dy;
                 // new position valid?
                 if (isValid(newY, newX)) {
                     // new position contain opposite player?
-                    if (getPiece(newY,newX) != null && getPiece(newY, newX).getPlayer() == piece.getPlayer().getOpposite() ) {
+                    if (getPiece(newY,newX) != null && getPiece(newY, newX).getPlayer() == piece.getPlayer().getOpposite()){
                         newX = newX + dx; newY = newY + dy;
                         // jump position valid?
                         if (isValid(newY, newX)){
@@ -238,6 +206,51 @@ public class BoardState {
         return result;
     }
 
+    private BoardState createNewState(int oldPos, int newPos, Piece piece, boolean jumped, int dy, int dx){
+        // check if king position
+        boolean kingConversion = false;
+        if (isKingPosition(newPos, piece.getPlayer())){
+            piece = new Piece(piece.getPlayer(), true);
+            kingConversion = true;
+        }
+        BoardState result = this.deepCopy();
+        result.pieceCount = new HashMap<>(pieceCount);
+        // move piece
+        result.state[oldPos] = null;
+        result.state[newPos] = piece;
+        // store meta data
+        result.fromPos = oldPos;
+        result.toPos = newPos;
+        Player oppPlayer = piece.getPlayer().getOpposite();
+        result.turn = oppPlayer;
+        if (jumped){
+            // remove captured piece
+            result.state[newPos - SIDE_LENGTH*dy - dx] = null;
+            result.pieceCount.replace(oppPlayer, result.pieceCount.get(oppPlayer) - 1);
+            // is another jump available? (not allowed if just converted into king)
+            if (result.jumpSuccessors(piece, newPos).size() > 0 && kingConversion == false){
+                // don't swap turns
+                result.turn = piece.getPlayer();
+                // remember double jump position
+                result.doublejumpPos = newPos;
+            }
+        }
+        return result;
+    }
+
+    private boolean isKingPosition(int pos, Player player){
+        int y = pos / SIDE_LENGTH;
+        if (y == 0 && player == Player.HUMAN){
+            return true;
+        }
+        else if (y == SIDE_LENGTH-1 && player == Player.AI){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     /**
      * Gets the destination position of the most recent move to get to this state.
      * @return
@@ -246,6 +259,21 @@ public class BoardState {
         return this.toPos;
     }
 
+    /**
+     * Gets the player whose turn it is
+     * @return
+     */
+    public Player getTurn() {
+        return turn;
+    }
+
+    /**
+     * Is the board in a game over state
+     * @return
+     */
+    public boolean isGameOver(){
+        return (pieceCount.get(Player.AI) == 0 || pieceCount.get(Player.HUMAN) == 0);
+    }
 
     /**
      * Get player piece at given position.
@@ -262,7 +290,7 @@ public class BoardState {
      * @param x
      * @return
      */
-    public Piece getPiece(int y, int x){
+    private Piece getPiece(int y, int x){
         return getPiece(SIDE_LENGTH*y + x);
     }
 
@@ -272,7 +300,7 @@ public class BoardState {
      * @param x
      * @return
      */
-    public boolean isValid(int y, int x){
+    private boolean isValid(int y, int x){
         return (0 <= y) && (y < SIDE_LENGTH) && (0 <= x) && (x < SIDE_LENGTH);
     }
 
