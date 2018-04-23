@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class AI {
 
-    private int depth = 6;
+    private int depth = 10;
 
     public AI(){
 
@@ -32,24 +32,45 @@ public class AI {
     }
 
     private int minimax(BoardState node, int depth){
+        int alpha = Integer.MIN_VALUE; // alpha computed as a MAX
+        int beta = Integer.MAX_VALUE; // beta computes as a MIN
+        return minimax(node, depth, alpha, beta);
+    }
+
+
+    /**
+     * Implements the minimax algorithm
+     * @param node
+     * @param depth
+     * @return
+     */
+    private int minimax(BoardState node, int depth, int alpha, int beta){
         if (depth == 0 || node.isGameOver()){
             return node.computeHeuristic(Player.AI);
         }
         if (node.getTurn() == Player.AI){ // MAX
-            int best = - Integer.MAX_VALUE;
+            // AI tries to maximize this value
+            int v = Integer.MIN_VALUE;
             for (BoardState child : node.getSuccessors(Player.AI)){
-                int val = minimax(child, depth-1);
-                best = Math.max(best, val);
+                v = Math.max(v, minimax(child, depth-1, alpha, beta));
+                alpha = Math.max(alpha, v);
+                if (alpha >= beta){
+                    break;
+                }
             }
-            return best;
+            return v;
         }
         if (node.getTurn() == Player.HUMAN){ // MIN
-            int best = Integer.MAX_VALUE;
+            // human tries to minimize this value
+            int v = Integer.MAX_VALUE;
             for (BoardState child : node.getSuccessors(Player.HUMAN)){
-                int val = minimax(child, depth-1);
-                best = Math.min(best,val);
+                v = Math.min(v,minimax(child, depth-1, alpha, beta));
+                beta = Math.min(beta, v);
+                if (alpha >= beta){
+                    break;
+                }
             }
-            return best;
+            return v;
         }
         throw new RuntimeException("Error in minimax algorithm");
     }
