@@ -5,10 +5,10 @@ import java.util.Random;
 
 public class AI {
 
-    private int depth = 8;
+    private int depth;
 
     public AI(){
-
+        depth = Settings.AI_DEPTH;
     }
 
     public BoardState move(BoardState state){

@@ -26,10 +26,55 @@ public class GUI extends JFrame{
     }
 
     private void start(){
+        settingsPopup();
         game = new Game();
         possibleMoves = new ArrayList<>();
         setup();
     }
+
+    /**
+     * Pop up dialog for user to choose game settings (e.g. AI difficulty, starting player etc)
+     */
+    private void settingsPopup(){
+        // panel for options
+        JPanel panel = new JPanel(new GridLayout(5,1));
+        // difficulty slider
+        JLabel text1 = new JLabel("Set Difficulty", 10);
+        JSlider slider = new JSlider();
+        slider.setMajorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setMaximum(10);
+        slider.setMinimum(1);
+        slider.setValue(Settings.AI_DEPTH);
+        // force takes option
+        JRadioButton forceTakesButton = new JRadioButton("Force Takes");
+        forceTakesButton.setSelected(Settings.FORCETAKES);
+        // who gets first move?
+        ButtonGroup buttonGroup = new ButtonGroup();
+        JRadioButton humanFirstRadioButton = new JRadioButton("You Play First");
+        JRadioButton aiRadioButton = new JRadioButton("Computer Plays First");
+        buttonGroup.add(humanFirstRadioButton);
+        buttonGroup.add(aiRadioButton);
+        aiRadioButton.setSelected(Settings.FIRSTMOVE== Player.AI);
+        humanFirstRadioButton.setSelected(Settings.FIRSTMOVE== Player.HUMAN);
+        // add components to panel
+        panel.add(text1);
+        panel.add(slider);
+        panel.add(forceTakesButton);
+        panel.add(humanFirstRadioButton);
+        panel.add(aiRadioButton);
+        // pop up
+        int result = JOptionPane.showConfirmDialog(null, panel, "Game Settings",
+                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        // process results
+        if(result == JOptionPane.OK_OPTION){
+            Settings.AI_DEPTH = slider.getValue();
+            Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
+            Settings.FORCETAKES = forceTakesButton.isSelected();
+        }
+    }
+
 
     /**
      * Sets up initial GUI configuration.
