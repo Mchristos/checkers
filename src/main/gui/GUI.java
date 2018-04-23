@@ -184,11 +184,13 @@ public class GUI extends JFrame{
      * @param actionEvent
      */
     private void onPieceClick(ActionEvent actionEvent){
-        CheckerButton button = (CheckerButton) actionEvent.getSource();
-        int pos = button.getPosition();
-        if(button.getPiece().getPlayer() == Player.HUMAN){
-            possibleMoves = game.getValidMoves(Player.HUMAN, pos);
-            updateCheckerBoard();
+        if(game.getTurn() == Player.HUMAN){
+            CheckerButton button = (CheckerButton) actionEvent.getSource();
+            int pos = button.getPosition();
+            if(button.getPiece().getPlayer() == Player.HUMAN){
+                possibleMoves = game.getValidMoves(Player.HUMAN, pos);
+                updateCheckerBoard();
+            }
         }
     }
 
@@ -217,8 +219,8 @@ public class GUI extends JFrame{
         game.aiMove();
         // compute time taken
         long aiMoveDurationInMs = (System.nanoTime() - startTime)/1000000;
-        // compute necessary delay time
-        long delayInMs = main.gui.Settings.AiPauseDurationInMs - aiMoveDurationInMs;
+        // compute necessary delay time (not less than zero)
+        long delayInMs = Math.max(0, main.gui.Settings.AiMinPauseDurationInMs - aiMoveDurationInMs);
         // schedule delayed update
         ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
         exec.schedule(new Runnable(){
