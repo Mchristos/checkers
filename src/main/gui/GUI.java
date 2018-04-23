@@ -200,25 +200,25 @@ public class GUI extends JFrame{
             game.playerMove(button.getBoardstate());
             possibleMoves = new ArrayList<>();
             updateCheckerBoard();
-            aiMove();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    aiMove();
+                }
+            });
         }
     }
 
     private void aiMove(){
         while (!game.isGameOver() && game.getTurn() == Player.AI){
             game.aiMove();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    try{
-                        TimeUnit.MILLISECONDS.sleep(500);
-                    }
-                    catch (InterruptedException e){
-                        System.out.println(e.toString());
-                    }
-                    updateCheckerBoard();
-                }
-            });
+            try{
+                TimeUnit.MILLISECONDS.sleep(1);
+            }
+            catch (InterruptedException e){
+                System.out.println(e.toString());
+            }
+            updateCheckerBoard();
         }
     }
 

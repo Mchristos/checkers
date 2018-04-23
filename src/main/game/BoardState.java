@@ -60,6 +60,15 @@ public class BoardState {
         return bs;
     }
 
+    public int computeHeuristic(Player player){
+        return this.pieceCount.get(player) - this.pieceCount.get(player.getOpposite());
+    }
+
+    public int computeHeuristic2(Player player){
+        return this.getSuccessors(player).size();
+    }
+
+
     /**
      * Gets valid successor states for a player
      * @param player

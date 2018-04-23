@@ -7,7 +7,7 @@ import java.util.Stack;
 public class Game{
 
     private Stack<BoardState> state;
-    private final int memory = 5;
+    private final int memory = 20;
     private AI ai;
 
     public Game(){
