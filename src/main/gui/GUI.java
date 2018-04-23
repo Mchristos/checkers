@@ -6,6 +6,8 @@ import main.game.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 
@@ -210,17 +212,38 @@ public class GUI extends JFrame{
     }
 
     private void aiMove(){
-        while (!game.isGameOver() && game.getTurn() == Player.AI){
-            game.aiMove();
-            try{
-                TimeUnit.MILLISECONDS.sleep(1);
+        // perform AI move
+        long startTime = System.nanoTime();
+        game.aiMove();
+        // compute time taken
+        long aiMoveDurationInMs = (System.nanoTime() - startTime)/1000000;
+        // compute necessary delay time
+        long delayInMs = main.gui.Settings.AiPauseDurationInMs - aiMoveDurationInMs;
+        // schedule delayed update
+        ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
+        exec.schedule(new Runnable(){
+            @Override
+            public void run(){
+                invokeAiUpdate();
             }
-            catch (InterruptedException e){
-                System.out.println(e.toString());
-            }
-            updateCheckerBoard();
-        }
+        }, delayInMs, TimeUnit.MILLISECONDS);
     }
+
+    /**
+     * Update checkerboard and trigger new AI move if necessary
+     */
+    private void invokeAiUpdate(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                updateCheckerBoard();
+                if (!game.isGameOver() && game.getTurn() == Player.AI){
+                    aiMove();
+                }
+            }
+        });
+    }
+
 
 
 

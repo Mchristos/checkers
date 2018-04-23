@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class AI {
 
-    private int depth = 10;
+    private int depth = 8;
 
     public AI(){
 
@@ -31,6 +31,12 @@ public class AI {
         return successors.get(i);
     }
 
+    /**
+     * Implements the minimax algorithm with alpha-beta pruning
+     * @param node
+     * @param depth
+     * @return minimax score associated with node
+     */
     private int minimax(BoardState node, int depth){
         int alpha = Integer.MIN_VALUE; // alpha computed as a MAX
         int beta = Integer.MAX_VALUE; // beta computes as a MIN
@@ -38,12 +44,6 @@ public class AI {
     }
 
 
-    /**
-     * Implements the minimax algorithm
-     * @param node
-     * @param depth
-     * @return
-     */
     private int minimax(BoardState node, int depth, int alpha, int beta){
         if (depth == 0 || node.isGameOver()){
             return node.computeHeuristic(Player.AI);
