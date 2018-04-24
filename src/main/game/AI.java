@@ -43,7 +43,6 @@ public class AI {
         return minimax(node, depth, alpha, beta);
     }
 
-
     private int minimax(BoardState node, int depth, int alpha, int beta){
         if (depth == 0 || node.isGameOver()){
             return node.computeHeuristic(Player.AI);
@@ -74,5 +73,4 @@ public class AI {
         }
         throw new RuntimeException("Error in minimax algorithm");
     }
-
 }

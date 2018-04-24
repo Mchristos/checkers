@@ -3,6 +3,7 @@ package main.gui;
 import main.game.Player;
 
 public class Settings{
+
     public static Colour AIcolour = Colour.BLACK; // Note: starting player gets black pieces
     public static int AiMinPauseDurationInMs = 800;
     public static int squareSize = 80;
@@ -10,7 +11,6 @@ public class Settings{
     public static int checkerHeight = 5*squareSize/6;
     public static int ghostButtonWidth = 30*squareSize/29;
     public static int ghostButtonHeight = 5*squareSize/6;
-
 
     /**
      * Gets the correct colour (black/white) for the given player

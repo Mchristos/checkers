@@ -7,10 +7,11 @@ import java.util.Stack;
 public class Game{
 
     private Stack<BoardState> state;
-    private final int memory = 20;
+    private int memory;
     private AI ai;
 
     public Game(){
+        memory = Settings.UNDO_MEMORY;
         state = new Stack<>();
         state.push(BoardState.InitialState());
         ai = new AI();

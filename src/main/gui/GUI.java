@@ -15,10 +15,6 @@ public class GUI extends JFrame{
 
     private Game game;
     private ArrayList<BoardState> possibleMoves;
-
-    // gui components
-    private JPanel contentPane;
-    private JOptionPane optionPane;
     private SquarePanel[] squares;
 
     public GUI(){
@@ -44,7 +40,7 @@ public class GUI extends JFrame{
         slider.setMajorTickSpacing(1);
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
-        slider.setMaximum(10);
+        slider.setMaximum(12);
         slider.setMinimum(1);
         slider.setValue(Settings.AI_DEPTH);
         // force takes option
@@ -103,7 +99,7 @@ public class GUI extends JFrame{
      */
     private void updateCheckerBoard(){
         GridBagConstraints c = new GridBagConstraints();
-        contentPane = new JPanel(new GridBagLayout());
+        JPanel contentPane = new JPanel(new GridBagLayout());
         squares = new SquarePanel[game.getState().NO_SQUARES];
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
             c.gridx = i % game.getState().SIDE_LENGTH;
@@ -301,7 +297,7 @@ public class GUI extends JFrame{
     {
         Object[] options = {"Yes",
                 "No", };
-        int n = optionPane.showOptionDialog(this, "Are you sure you want to restart?",
+        int n = JOptionPane.showOptionDialog(this, "Are you sure you want to restart?",
                 "Restart game? ",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -319,7 +315,7 @@ public class GUI extends JFrame{
     private void onExitClick(){
         Object[] options = {"Yes",
                 "No", };
-        int n = optionPane.showOptionDialog(this,
+        int n = JOptionPane.showOptionDialog(this,
                         "\nAre you sure you want to leave?",
                 "Quit game? ",
                 JOptionPane.YES_NO_OPTION,
@@ -339,6 +335,12 @@ public class GUI extends JFrame{
      */
     private void onHelpClick(){
 
+        int n = JOptionPane.showOptionDialog(this,
+                "\n 1. Click a piece \n " +
+                       "2. Click where you want to move",
+                "Instructions",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE, null, null, null);
     }
 
     /**

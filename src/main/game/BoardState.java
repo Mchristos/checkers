@@ -3,8 +3,6 @@ package main.game;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.stream.Stream;
 
 public class BoardState {
 
@@ -54,9 +52,7 @@ public class BoardState {
 
     private BoardState deepCopy(){
         BoardState bs = new BoardState();
-        for (int i = 0; i < bs.state.length; i++){
-            bs.state[i] = this.state[i];
-        }
+        System.arraycopy(this.state, 0, bs.state, 0, bs.state.length);
         return bs;
     }
 
@@ -67,7 +63,6 @@ public class BoardState {
     public int computeHeuristic2(Player player){
         return this.getSuccessors(player).size();
     }
-
 
     /**
      * Gets valid successor states for a player
@@ -111,7 +106,6 @@ public class BoardState {
         }
         return result;
     }
-
 
     /**
      * Gets valid successor states for a specific piece on the board
@@ -252,12 +246,7 @@ public class BoardState {
         if (y == 0 && player == Player.HUMAN){
             return true;
         }
-        else if (y == SIDE_LENGTH-1 && player == Player.AI){
-            return true;
-        }
-        else{
-            return false;
-        }
+        else return y == SIDE_LENGTH - 1 && player == Player.AI;
     }
 
     /**
