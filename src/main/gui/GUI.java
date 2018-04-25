@@ -6,6 +6,7 @@ import main.game.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,7 +28,11 @@ public class GUI extends JFrame{
         settingsPopup();
         game = new Game();
         possibleMoves = new ArrayList<>();
+        hintMove = null;
         setup();
+        if (main.gui.Settings.hintMode){
+            onHintClick();
+        }
     }
 
     /**
@@ -198,7 +203,9 @@ public class GUI extends JFrame{
         JMenuItem undoItem = new JMenuItem("Undo");
         JMenu viewMenu = new JMenu("View");
         JRadioButtonMenuItem viewItemHelpMode = new JRadioButtonMenuItem("Help mode");
+        JRadioButtonMenuItem viewItemHintMode = new JRadioButtonMenuItem("Hint mode");
         viewItemHelpMode.setSelected(main.gui.Settings.helpMode);
+        viewItemHintMode.setSelected(main.gui.Settings.hintMode);
         JMenu helpMenu = new JMenu("Help");
         JMenuItem rulesItem = new JMenuItem("Game Rules");
         JMenuItem helpItemHint = new JMenuItem("Hint!");
@@ -235,6 +242,12 @@ public class GUI extends JFrame{
                 onHelpModeClick();
             }
         });
+        viewItemHintMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                onHintModeClick();
+            }
+        });
         helpItemHint.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -247,6 +260,7 @@ public class GUI extends JFrame{
         fileMenu.add(quitItem);
         editMenu.add(undoItem);
         viewMenu.add(viewItemHelpMode);
+        viewMenu.add(viewItemHintMode);
         helpMenu.add(helpItemHint);
         helpMenu.add(helpItemMovables);
         helpMenu.add(rulesItem);
@@ -269,6 +283,11 @@ public class GUI extends JFrame{
     private void onHelpModeClick(){
         main.gui.Settings.helpMode = !main.gui.Settings.helpMode;
         System.out.println("help mode: " + main.gui.Settings.helpMode);
+    }
+
+    private void onHintModeClick(){
+        main.gui.Settings.hintMode = !main.gui.Settings.hintMode;
+        System.out.println("hint mode: " + main.gui.Settings.hintMode);
     }
 
     /**
@@ -334,6 +353,18 @@ public class GUI extends JFrame{
                 updateCheckerBoard();
                 if (!game.isGameOver() && game.getTurn() == Player.AI){
                     aiMove();
+                }
+                else{
+                    if(main.gui.Settings.hintMode){
+                        // in hint mode, display hint (with pause) after AI move
+                        ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
+                        exec.schedule(new Runnable(){
+                            @Override
+                            public void run(){
+                                onHintClick();
+                            }
+                        }, 0, TimeUnit.MILLISECONDS);
+                    }
                 }
             }
         });
@@ -417,5 +448,8 @@ public class GUI extends JFrame{
     private void onUndoClick(){
         game.undo();
         updateCheckerBoard();
+        if (main.gui.Settings.hintMode){
+            onHintClick();
+        }
     }
 }

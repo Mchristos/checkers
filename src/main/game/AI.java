@@ -20,23 +20,37 @@ public class AI {
 
     public BoardState move(BoardState state, Player player){
         ArrayList<BoardState> successors = state.getSuccessors(player);
+        return minimaxMove(successors);
+    }
+
+    private BoardState minimaxMove(ArrayList<BoardState> successors){
         int bestScore = Integer.MIN_VALUE;
-        BoardState result = null;
+        ArrayList<BoardState> equalBests = new ArrayList<>();
         for (BoardState succ : successors){
             int val = minimax(succ, this.depth);
             if (val > bestScore){
-                result = succ;
                 bestScore = val;
+                equalBests.clear();
+            }
+            if (val == bestScore){
+                equalBests.add(succ);
             }
         }
-        return result;
-    }
+        if(equalBests.size() > 1){
+            System.out.println(player.toString() + " choosing random best move");
+        }
+        return randomMove(equalBests);
 
-    private BoardState randomNext(ArrayList<BoardState> successors){
+    }
+    private BoardState randomMove(ArrayList<BoardState> successors){
+        if (successors.size() < 1){
+            throw new RuntimeException("Can't randomly choose from empty list.");
+        }
         Random rand = new Random();
         int i = rand.nextInt(successors.size());
         return successors.get(i);
     }
+
 
     /**
      * Implements the minimax algorithm with alpha-beta pruning
@@ -52,6 +66,9 @@ public class AI {
 
     private int minimax(BoardState node, int depth, int alpha, int beta){
         if (depth == 0 || node.isGameOver()){
+//            if(node.pieceCount.get(player.getOpposite()) == 0 ) {
+//                System.out.println(player.toString() + " can see a winning sequence");
+//            }
             return node.computeHeuristic(this.player);
         }
         if (node.getTurn() == player){ // MAX

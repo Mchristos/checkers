@@ -15,7 +15,7 @@ public class BoardState {
     private int doublejumpPos = -1;
     private Player turn;
     // track number of human/AI pieces on board
-    private HashMap<Player, Integer> pieceCount;
+    public HashMap<Player, Integer> pieceCount;
     private HashMap<Player, Integer> kingCount;
 
     public BoardState(){
@@ -68,9 +68,15 @@ public class BoardState {
      * @return
      */
     public int computeHeuristic(Player player){
+        // 'infinite' value for winning
         if (this.pieceCount.get(player.getOpposite()) == 0){
             return Integer.MAX_VALUE;
         }
+        // 'negative infinite' for losing
+        if (this.pieceCount.get(player) == 0){
+            return Integer.MIN_VALUE;
+        }
+        // difference between piece counts with kings counted twice
         return this.pieceCount.get(player) + this.kingCount.get(player) - this.pieceCount.get(player.getOpposite())
                 - this.kingCount.get(player.getOpposite());
     }
