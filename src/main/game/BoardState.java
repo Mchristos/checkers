@@ -16,6 +16,8 @@ public class BoardState {
     private Player turn;
     // track number of human/AI pieces on board
     private HashMap<Player, Integer> pieceCount;
+    private HashMap<Player, Integer> kingCount;
+
     public BoardState(){
         state = new Piece[BoardState.NO_SQUARES];
         turn = Settings.FIRSTMOVE;
@@ -47,6 +49,9 @@ public class BoardState {
         bs.pieceCount = new HashMap<>();
         bs.pieceCount.put(Player.AI, aiCount);
         bs.pieceCount.put(Player.HUMAN,humanCount);
+        bs.kingCount = new HashMap<>();
+        bs.kingCount.put(Player.AI, 0);
+        bs.kingCount.put(Player.HUMAN, 0);
         return bs;
     }
 
@@ -56,10 +61,22 @@ public class BoardState {
         return bs;
     }
 
+    /**
+     * Compute heuristic indicating how desirable this state is to a given player. Computed as number of pieces minus
+     * number of opponent pieces, with king pieces counted double.
+     * @param player
+     * @return
+     */
     public int computeHeuristic(Player player){
-        return this.pieceCount.get(player) - this.pieceCount.get(player.getOpposite());
+        return this.pieceCount.get(player) + this.kingCount.get(player) - this.pieceCount.get(player.getOpposite())
+                - this.kingCount.get(player.getOpposite());
     }
 
+    /**
+     * Second heuristic function: calculates the number of options open to the player.
+     * @param player
+     * @return
+     */
     public int computeHeuristic2(Player player){
         return this.getSuccessors(player).size();
     }
@@ -210,14 +227,17 @@ public class BoardState {
     }
 
     private BoardState createNewState(int oldPos, int newPos, Piece piece, boolean jumped, int dy, int dx){
+        BoardState result = this.deepCopy();
+        result.pieceCount = new HashMap<>(pieceCount);
+        result.kingCount = new HashMap<>(kingCount);
         // check if king position
         boolean kingConversion = false;
         if (isKingPosition(newPos, piece.getPlayer())){
             piece = new Piece(piece.getPlayer(), true);
             kingConversion = true;
+            // increase king count
+            result.kingCount.replace(piece.getPlayer(), result.kingCount.get(piece.getPlayer()) + 1);
         }
-        BoardState result = this.deepCopy();
-        result.pieceCount = new HashMap<>(pieceCount);
         // move piece
         result.state[oldPos] = null;
         result.state[newPos] = piece;
