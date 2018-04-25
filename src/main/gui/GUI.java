@@ -179,10 +179,16 @@ public class GUI extends JFrame{
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem restartItem = new JMenuItem("Restart");
-        JMenuItem helpItem = new JMenuItem("Help");
         JMenuItem quitItem = new JMenuItem("Quit");
         JMenu editMenu = new JMenu("Edit");
         JMenuItem undoItem = new JMenuItem("Undo");
+        JMenu viewMenu = new JMenu("View");
+        JRadioButtonMenuItem viewItemHelpMode = new JRadioButtonMenuItem("Help mode");
+        viewItemHelpMode.setSelected(main.gui.Settings.helpMode);
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem rulesItem = new JMenuItem("Game Rules");
+        JMenuItem helpItemHint = new JMenuItem("Hint!");
+        JMenuItem helpItemMovables = new JMenuItem("Show movable pieces");
 
         // add action listeners
         quitItem.addActionListener(new ActionListener() {
@@ -197,10 +203,10 @@ public class GUI extends JFrame{
                 onRestartClick();
             }
         });
-        helpItem.addActionListener(new ActionListener() {
+        rulesItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                onHelpClick();
+                onRulesClick();
             }
         });
         undoItem.addActionListener(new ActionListener() {
@@ -209,16 +215,35 @@ public class GUI extends JFrame{
                 onUndoClick();
             }
         });
+        viewItemHelpMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                onHelpModeClick();
+            }
+        });
+
         // add components to menu bar
-        fileMenu.add(restartItem); fileMenu.add(helpItem); fileMenu.add(quitItem);
-        menuBar.add(fileMenu);
+        fileMenu.add(restartItem);
+        fileMenu.add(quitItem);
         editMenu.add(undoItem);
+        viewMenu.add(viewItemHelpMode);
+        helpMenu.add(helpItemHint);
+        helpMenu.add(helpItemMovables);
+        helpMenu.add(rulesItem);
+        menuBar.add(fileMenu);
         menuBar.add(editMenu);
+        menuBar.add(viewMenu);
+        menuBar.add(helpMenu);
         this.setJMenuBar(menuBar);
     }
 
     /***************************************************************/
     /*********************** ON CLICK METHODS **********************/
+
+    private void onHelpModeClick(){
+        main.gui.Settings.helpMode = !main.gui.Settings.helpMode;
+        System.out.println("help mode: " + main.gui.Settings.helpMode);
+    }
 
     /**
      * Occurs when user clicks on checker piece
@@ -287,9 +312,6 @@ public class GUI extends JFrame{
         });
     }
 
-
-
-
     /**
      * Open dialog for restarting the program.
      */
@@ -333,14 +355,33 @@ public class GUI extends JFrame{
     /**
      * Open help dialog.
      */
-    private void onHelpClick(){
+    private void onRulesClick(){
 
-        int n = JOptionPane.showOptionDialog(this,
-                "\n 1. Click a piece \n " +
-                       "2. Click where you want to move",
-                "Instructions",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE, null, null, null);
+        String message =
+                "1. Moves are allowed only on the dark squares, so pieces always move diagonally. Single " +
+                "pieces are always limited to forward moves (toward the opponent). <br /> <br /> " +
+
+                "2. A piece making a non-capturing move (not involving a jump) may move only one square. <br /> <br />"+
+
+                "3. A piece making a capturing move (a jump) leaps over one of the opponent's pieces, landing in a " +
+                "straight diagonal line on the other side. Only one piece may be captured in a single jump; however, " +
+                "multiple jumps are allowed during a single turn. <br /> <br />" +
+
+                        "4. When a piece is captured, it is removed from the board. <br /> <br />" +
+                "5. If a player is able to make a capture, there is no option; the jump must be made. If more than " +
+                   "one capture is available, the player is free to choose whichever he or she prefers. <br /> <br />" +
+
+                "6. When a piece reaches the furthest row from the player who controls that piece, it is crowned and " +
+                        "becomes a king. <br /> <br />" +
+                "7. Kings are limited to moving diagonally but may move both forward and backward. <br /> <br />" +
+                "8. Kings may combine jumps in several directions, forward and backward, on the same turn. Single " +
+                        "pieces may shift direction diagonally during a multiple capture turn, but must always jump " +
+                        "forward (toward the opponent).";
+
+        JOptionPane.showMessageDialog(this,
+                "<html><body><p style='width: 400px;'>"+message+"</p></body></html>",
+                "",
+                JOptionPane.INFORMATION_MESSAGE );
     }
 
     /**

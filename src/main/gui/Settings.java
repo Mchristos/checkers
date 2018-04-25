@@ -4,7 +4,8 @@ import main.game.Player;
 
 public class Settings{
 
-    public static Colour AIcolour = Colour.BLACK; // Note: starting player gets black pieces
+    public static Colour AIcolour = Colour.BLACK; // Note: starting player gets white pieces
+    public static boolean helpMode = true;
     public static int AiMinPauseDurationInMs = 800;
     public static int squareSize = 80;
     public static int checkerWidth = 5*squareSize/6;

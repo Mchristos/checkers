@@ -27,7 +27,13 @@ public class GhostButton extends JButton{
     private void setIcon(){
         BufferedImage buttonIcon = null;
         try{
-            buttonIcon = ImageIO.read(new File("images/dottedcircle2.png"));
+            if(Settings.helpMode){
+                buttonIcon = ImageIO.read(new File("images/dottedcircle.png"));
+
+            }
+            else{
+                buttonIcon = ImageIO.read(new File("images/dottedcircleblack.png"));
+            }
         }
         catch (IOException e){
             System.out.println(e.toString());
