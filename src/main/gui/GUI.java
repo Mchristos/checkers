@@ -377,17 +377,9 @@ public class GUI extends JFrame{
                 if (!game.isGameOver() && game.getTurn() == Player.AI){
                     aiMove();
                 }
-                else{
-                    if(main.gui.Settings.hintMode){
-                        // in hint mode, display hint (with pause) after AI move
-                        ScheduledExecutorService exec = Executors.newScheduledThreadPool(1);
-                        exec.schedule(new Runnable(){
-                            @Override
-                            public void run(){
-                                onHintClick();
-                            }
-                        }, 0, TimeUnit.MILLISECONDS);
-                    }
+                else if (main.gui.Settings.hintMode){
+                    // in hint mode, display hint after AI move
+                    onHintClick();
                 }
             }
         });
