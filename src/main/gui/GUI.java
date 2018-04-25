@@ -16,6 +16,8 @@ public class GUI extends JFrame{
     private Game game;
     private ArrayList<BoardState> possibleMoves;
     private SquarePanel[] squares;
+    // hint feature
+    private BoardState hintMove;
 
     public GUI(){
         start();
@@ -101,10 +103,22 @@ public class GUI extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
         JPanel contentPane = new JPanel(new GridBagLayout());
         squares = new SquarePanel[game.getState().NO_SQUARES];
+        int fromPos = -1;
+        int toPos = -1;
+        if(hintMove != null){
+            fromPos = hintMove.getFromPos();
+            toPos = hintMove.getToPos();
+        }
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
             c.gridx = i % game.getState().SIDE_LENGTH;
             c.gridy = i / game.getState().SIDE_LENGTH;
             squares[i] = new SquarePanel(c.gridx, c.gridy);
+            if (i == fromPos){
+                squares[i].setHighlighted();
+            }
+            if(i == toPos){
+                squares[i].setHighlighted();
+            }
             contentPane.add(squares[i], c);
         }
         addPieces();
@@ -221,6 +235,12 @@ public class GUI extends JFrame{
                 onHelpModeClick();
             }
         });
+        helpItemHint.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                onHintClick();
+            }
+        });
 
         // add components to menu bar
         fileMenu.add(restartItem);
@@ -239,6 +259,12 @@ public class GUI extends JFrame{
 
     /***************************************************************/
     /*********************** ON CLICK METHODS **********************/
+
+    private void onHintClick(){
+        AI ai = new AI(10, Player.HUMAN);
+        hintMove = ai.move(this.game.getState(), Player.HUMAN);
+        updateCheckerBoard();
+    }
 
     private void onHelpModeClick(){
         main.gui.Settings.helpMode = !main.gui.Settings.helpMode;
@@ -266,6 +292,7 @@ public class GUI extends JFrame{
      */
     private void onGhostButtonClick(ActionEvent actionEvent){
         if (!game.isGameOver() && game.getTurn() == Player.HUMAN){
+            hintMove = null;
             GhostButton button = (GhostButton) actionEvent.getSource();
             game.playerMove(button.getBoardstate());
             possibleMoves = new ArrayList<>();

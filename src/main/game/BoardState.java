@@ -68,6 +68,9 @@ public class BoardState {
      * @return
      */
     public int computeHeuristic(Player player){
+        if (this.pieceCount.get(player.getOpposite()) == 0){
+            return Integer.MAX_VALUE;
+        }
         return this.pieceCount.get(player) + this.kingCount.get(player) - this.pieceCount.get(player.getOpposite())
                 - this.kingCount.get(player.getOpposite());
     }
@@ -276,6 +279,11 @@ public class BoardState {
     public int getToPos(){
         return this.toPos;
     }
+
+    public int getFromPos(){
+        return this.fromPos;
+    }
+
 
     /**
      * Gets the player whose turn it is

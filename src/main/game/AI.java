@@ -6,13 +6,20 @@ import java.util.Random;
 public class AI {
 
     private int depth;
+    private Player player;
 
     public AI(){
         depth = Settings.AI_DEPTH;
+        player = Player.AI;
     }
 
-    public BoardState move(BoardState state){
-        ArrayList<BoardState> successors = state.getSuccessors(Player.AI);
+    public AI(int depth, Player player){
+        this.depth = depth;
+        this.player = player;
+    }
+
+    public BoardState move(BoardState state, Player player){
+        ArrayList<BoardState> successors = state.getSuccessors(player);
         int bestScore = Integer.MIN_VALUE;
         BoardState result = null;
         for (BoardState succ : successors){
@@ -45,12 +52,12 @@ public class AI {
 
     private int minimax(BoardState node, int depth, int alpha, int beta){
         if (depth == 0 || node.isGameOver()){
-            return node.computeHeuristic(Player.AI);
+            return node.computeHeuristic(this.player);
         }
-        if (node.getTurn() == Player.AI){ // MAX
+        if (node.getTurn() == player){ // MAX
             // AI tries to maximize this value
             int v = Integer.MIN_VALUE;
-            for (BoardState child : node.getSuccessors(Player.AI)){
+            for (BoardState child : node.getSuccessors(player)){
                 v = Math.max(v, minimax(child, depth-1, alpha, beta));
                 alpha = Math.max(alpha, v);
                 if (alpha >= beta){
@@ -59,10 +66,10 @@ public class AI {
             }
             return v;
         }
-        if (node.getTurn() == Player.HUMAN){ // MIN
+        if (node.getTurn() == player.getOpposite()){ // MIN
             // human tries to minimize this value
             int v = Integer.MAX_VALUE;
-            for (BoardState child : node.getSuccessors(Player.HUMAN)){
+            for (BoardState child : node.getSuccessors(player.getOpposite())){
                 v = Math.min(v,minimax(child, depth-1, alpha, beta));
                 beta = Math.min(beta, v);
                 if (alpha >= beta){

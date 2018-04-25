@@ -26,7 +26,7 @@ public class Game{
     public void aiMove(){
         // update state with AI move
         if (!isGameOver() && state.peek().getTurn() == Player.AI){
-            BoardState newState = ai.move(this.state.peek());
+            BoardState newState = ai.move(this.state.peek(), Player.AI);
             updateState(newState);
         }
     }

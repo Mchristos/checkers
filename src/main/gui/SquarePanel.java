@@ -20,6 +20,11 @@ public class SquarePanel extends JPanel {
         }
     }
 
+    public void setHighlighted(){
+        color = Color.GRAY;
+    }
+
+
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
         g.setColor(color);
