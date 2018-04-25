@@ -6,10 +6,12 @@ import main.game.Settings;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.swing.*;
 
 public class GUI extends JFrame{
@@ -19,6 +21,7 @@ public class GUI extends JFrame{
     private SquarePanel[] squares;
     // hint feature
     private BoardState hintMove;
+    private List<Integer> helpMoves;
 
     public GUI(){
         start();
@@ -124,6 +127,11 @@ public class GUI extends JFrame{
             if(i == toPos){
                 squares[i].setHighlighted();
             }
+            if (helpMoves != null){
+                if (helpMoves.contains(i)){
+                    squares[i].setHighlighted();
+                }
+            }
             contentPane.add(squares[i], c);
         }
         addPieces();
@@ -178,6 +186,7 @@ public class GUI extends JFrame{
             squares[newPos].add(button);
         }
     }
+
 
     /**
      * Sets up the menu bar component.
@@ -254,6 +263,12 @@ public class GUI extends JFrame{
                 onHintClick();
             }
         });
+        helpItemMovables.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                onHelpMovablesClick();
+            }
+        });
 
         // add components to menu bar
         fileMenu.add(restartItem);
@@ -276,7 +291,14 @@ public class GUI extends JFrame{
 
     private void onHintClick(){
         AI ai = new AI(10, Player.HUMAN);
+        helpMoves = null;
         hintMove = ai.move(this.game.getState(), Player.HUMAN);
+        updateCheckerBoard();
+    }
+
+    private void onHelpMovablesClick(){
+        hintMove = null;
+        helpMoves = game.getState().getSuccessors(Player.HUMAN).stream().map(x -> x.getFromPos()).collect(Collectors.toList());
         updateCheckerBoard();
     }
 
@@ -312,6 +334,7 @@ public class GUI extends JFrame{
     private void onGhostButtonClick(ActionEvent actionEvent){
         if (!game.isGameOver() && game.getTurn() == Player.HUMAN){
             hintMove = null;
+            helpMoves = null;
             GhostButton button = (GhostButton) actionEvent.getSource();
             game.playerMove(button.getBoardstate());
             possibleMoves = new ArrayList<>();
