@@ -37,41 +37,35 @@ public class CheckerButton extends JButton{
         this.setBorder(BorderFactory.createEmptyBorder());
         this.setContentAreaFilled(false);
         setIcon(piece);
-
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent mouseEvent) {
-                screenX = mouseEvent.getXOnScreen();
-                screenY = mouseEvent.getYOnScreen();
-                X = getX();
-                Y = getY();
-            }
-            @Override
-            public void mouseReleased(MouseEvent mouseEvent){
-                int deltaX = mouseEvent.getXOnScreen() - screenX;
-                int deltaY = mouseEvent.getYOnScreen() - screenY;
-                int dx = (int) Math.round((double)deltaX / (double) main.gui.Settings.squareSize);
-                int dy = (int) Math.round((double)deltaY / (double) main.gui.Settings.squareSize);
-                gui.onMouseRelease(position, dx, dy);
-            }
-        });
-        this.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent mouseEvent) {
-                int deltaX = mouseEvent.getXOnScreen() - screenX;
-                int deltaY = mouseEvent.getYOnScreen() - screenY;
-                setLocation(X + deltaX, Y + deltaY);
-            }
-        });
+        if (piece.getPlayer() == Player.HUMAN){
+            this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    screenX = mouseEvent.getXOnScreen();
+                    screenY = mouseEvent.getYOnScreen();
+                    X = getX();
+                    Y = getY();
+                }
+                @Override
+                public void mouseReleased(MouseEvent mouseEvent){
+                    int deltaX = mouseEvent.getXOnScreen() - screenX;
+                    int deltaY = mouseEvent.getYOnScreen() - screenY;
+                    int dx = (int) Math.round((double)deltaX / (double) main.gui.Settings.squareSize);
+                    int dy = (int) Math.round((double)deltaY / (double) main.gui.Settings.squareSize);
+                    gui.onMouseRelease(position, dx, dy);
+                }
+            });
+            this.addMouseMotionListener(new MouseMotionAdapter() {
+                @Override
+                public void mouseDragged(MouseEvent mouseEvent) {
+                    int deltaX = mouseEvent.getXOnScreen() - screenX;
+                    int deltaY = mouseEvent.getYOnScreen() - screenY;
+                    setLocation(X + deltaX, Y + deltaY);
+                }
+            });
+        }
     }
 
-    public int getScreenX() {
-        return screenX;
-    }
-
-    public int getScreenY(){
-        return screenY;
-    }
 
     public int getPosition() {
         return position;

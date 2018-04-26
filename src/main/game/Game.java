@@ -24,6 +24,9 @@ public class Game{
 
     public MoveFeedback playerMove(int fromPos, int dx, int dy){
         int toPos = fromPos + dx + BoardState.SIDE_LENGTH*dy;
+        if (toPos > getState().state.length){
+            return MoveFeedback.NOT_ON_BOARD;
+        }
         // check for forced jumped
         ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(Player.HUMAN, true);
         boolean jumps = jumpSuccessors.size() > 0;

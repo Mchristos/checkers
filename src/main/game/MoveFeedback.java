@@ -6,6 +6,7 @@ public enum MoveFeedback {
     NO_FREE_SPACE ("You can't move onto another piece."),
     ONLY_SINGLE_DIAGONALS ("You can only make single moves."),
     NO_BACKWARD_MOVES_FOR_SINGLES ("Only kings can move backwards!"),
+    NOT_ON_BOARD(""),
     PIECE_BLOCKED ("This piece is blocked and can't move."),
     UNKNOWN_INVALID("Not a valid move."),
     SUCCESS ("Success");
