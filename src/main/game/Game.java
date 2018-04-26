@@ -23,6 +23,18 @@ public class Game{
         }
     }
 
+    public void playerMove(int fromPos, int dx, int dy){
+        int toPos = fromPos + dx + BoardState.SIDE_LENGTH*dy;
+        ArrayList<BoardState> successors = this.state.peek().getSuccessors(Player.HUMAN, fromPos);
+        for (BoardState succ : successors){
+            if (succ.getFromPos() == fromPos && succ.getToPos() == toPos){
+                updateState(succ);
+                break;
+            }
+        }
+
+    }
+
     public void aiMove(){
         // update state with AI move
         if (!isGameOver() && state.peek().getTurn() == Player.AI){

@@ -19,6 +19,7 @@ public class GUI extends JFrame{
     private Game game;
     private ArrayList<BoardState> possibleMoves;
     private SquarePanel[] squares;
+    private JPanel contentPane;
     // hint feature
     private BoardState hintMove;
     private List<Integer> helpMoves;
@@ -108,8 +109,16 @@ public class GUI extends JFrame{
      * Updates the checkerboard GUI based on the game state.
      */
     private void updateCheckerBoard(){
-        GridBagConstraints c = new GridBagConstraints();
-        JPanel contentPane = new JPanel(new GridBagLayout());
+        contentPane = new JPanel(new GridBagLayout());
+        addPieces();
+        addSquares();
+        addGhostButtons();
+        this.setContentPane(contentPane);
+        this.pack();
+        this.setVisible(true);
+    }
+
+    private void addSquares(){
         squares = new SquarePanel[game.getState().NO_SQUARES];
         int fromPos = -1;
         int toPos = -1;
@@ -117,6 +126,7 @@ public class GUI extends JFrame{
             fromPos = hintMove.getFromPos();
             toPos = hintMove.getToPos();
         }
+        GridBagConstraints c = new GridBagConstraints();
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
             c.gridx = i % game.getState().SIDE_LENGTH;
             c.gridy = i / game.getState().SIDE_LENGTH;
@@ -134,20 +144,6 @@ public class GUI extends JFrame{
             }
             contentPane.add(squares[i], c);
         }
-        addPieces();
-        addGhostButtons();
-        this.setContentPane(contentPane);
-        this.pack();
-        this.setVisible(true);
-    }
-
-    private void updateLater(){
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                updateCheckerBoard();
-            }
-        });
     }
 
 
@@ -155,17 +151,20 @@ public class GUI extends JFrame{
      * Add checker pieces to the GUI corresponding to the game state
      */
     private void addPieces(){
+        GridBagConstraints c = new GridBagConstraints();
         for (int i = 0; i < game.getState().NO_SQUARES; i++){
+            c.gridx = i % game.getState().SIDE_LENGTH;
+            c.gridy = i / game.getState().SIDE_LENGTH;
             if(game.getState().getPiece(i) != null){
                 Piece piece = game.getState().getPiece(i);
-                CheckerButton button = new CheckerButton(i, piece);
+                CheckerButton button = new CheckerButton(i, piece, this);
                 button.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent actionEvent) {
                         onPieceClick(actionEvent);
                     }
                 });
-                squares[i].add(button);
+                contentPane.add(button, c);
             }
         }
     }
@@ -270,6 +269,7 @@ public class GUI extends JFrame{
             }
         });
 
+
         // add components to menu bar
         fileMenu.add(restartItem);
         fileMenu.add(quitItem);
@@ -288,6 +288,12 @@ public class GUI extends JFrame{
 
     /***************************************************************/
     /*********************** ON CLICK METHODS **********************/
+
+    public void onMouseRelease(int position, int dx, int dy){
+        game.playerMove(position, dx, dy);
+        updateCheckerBoard();
+        aiMove();
+    }
 
     private void onHintClick(){
         AI ai = new AI(10, Player.HUMAN);
@@ -317,7 +323,7 @@ public class GUI extends JFrame{
      * @param actionEvent
      */
     private void onPieceClick(ActionEvent actionEvent){
-        if(game.getTurn() == Player.HUMAN){
+        if(game.getTurn() == Player.HUMAN && (main.gui.Settings.helpMode)  ){
             CheckerButton button = (CheckerButton) actionEvent.getSource();
             int pos = button.getPosition();
             if(button.getPiece().getPlayer() == Player.HUMAN){
