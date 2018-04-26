@@ -290,9 +290,15 @@ public class GUI extends JFrame{
     /*********************** ON CLICK METHODS **********************/
 
     public void onMouseRelease(int position, int dx, int dy){
-        game.playerMove(position, dx, dy);
-        updateCheckerBoard();
-        aiMove();
+        MoveFeedback feedback = game.playerMove(position, dx, dy);
+        if (feedback == MoveFeedback.SUCCESS){
+            updateCheckerBoard();
+            aiMove();
+        }
+        else{
+            updateCheckerBoard();
+            System.out.println(feedback.toString());
+        }
     }
 
     private void onHintClick(){

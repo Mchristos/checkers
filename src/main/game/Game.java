@@ -1,7 +1,6 @@
 package main.game;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Stack;
 
 public class Game{
@@ -23,15 +22,44 @@ public class Game{
         }
     }
 
-    public void playerMove(int fromPos, int dx, int dy){
+    public MoveFeedback playerMove(int fromPos, int dx, int dy){
         int toPos = fromPos + dx + BoardState.SIDE_LENGTH*dy;
-        ArrayList<BoardState> successors = this.state.peek().getSuccessors(Player.HUMAN, fromPos);
-        for (BoardState succ : successors){
+        // check for forced jumped
+        ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(Player.HUMAN, true);
+        boolean jumps = jumpSuccessors.size() > 0;
+        if (jumps){
+            for (BoardState succ : jumpSuccessors){
+                if (succ.getFromPos() == fromPos && succ.getToPos() == toPos){
+                    updateState(succ);
+                    return MoveFeedback.SUCCESS;
+                }
+            }
+            return MoveFeedback.FORCED_JUMP;
+        }
+        // check diagonal
+        if (Math.abs(dx) != Math.abs(dy)){
+            return MoveFeedback.NOT_DIAGONAL;
+        }
+        // check for move onto piece
+        if (this.getState().state[toPos] != null){
+            return MoveFeedback.NO_FREE_SPACE;
+        }
+        // check for non-jump moves
+        ArrayList<BoardState> nonJumpSuccessors = this.state.peek().getSuccessors(Player.HUMAN, fromPos, false);
+        for (BoardState succ : nonJumpSuccessors){
             if (succ.getFromPos() == fromPos && succ.getToPos() == toPos){
                 updateState(succ);
-                break;
+                return MoveFeedback.SUCCESS;
             }
         }
+        // TODO work out what went wrong
+        if (dy > 1){
+            return MoveFeedback.NO_BACKWARD_MOVES_FOR_SINGLES;
+        }
+        if (Math.abs(dx)== 2){
+            return MoveFeedback.ONLY_SINGLE_DIAGONALS;
+        }
+        return MoveFeedback.UNKNOWN_INVALID;
 
     }
 
