@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,9 @@ public class GUI extends JFrame{
     private Game game;
     private ArrayList<BoardState> possibleMoves;
     private SquarePanel[] squares;
+    private JPanel checkerboardPanel;
     private JPanel contentPane;
+    private JTextArea textBox;
     // hint feature
     private BoardState hintMove;
     private List<Integer> helpMoves;
@@ -100,8 +101,24 @@ public class GUI extends JFrame{
                 main.gui.Settings.AIcolour = Colour.BLACK;
                 break;
         }
+
         setupMenuBar();
+        contentPane = new JPanel();
+        checkerboardPanel = new JPanel(new GridBagLayout());
+        JPanel textPanel = new JPanel();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+        this.setContentPane(contentPane);
+        contentPane.add(checkerboardPanel);
+        contentPane.add(textPanel);
+        textBox = new JTextArea();
+        textBox.setEditable(false);
+        textBox.setLineWrap(false);
+        textBox.setWrapStyleWord(true);
+        textBox.setAutoscrolls(true);
+        textPanel.add(textBox);
+
         updateCheckerBoard();
+        updateText("");
         this.pack();
         this.setVisible(true);
         if (Settings.FIRSTMOVE == Player.AI){
@@ -109,15 +126,20 @@ public class GUI extends JFrame{
         }
     }
 
+    private void updateText(String text){
+        textBox.setText(text);
+    }
+
     /**
      * Updates the checkerboard GUI based on the game state.
      */
     private void updateCheckerBoard(){
-        contentPane = new JPanel(new GridBagLayout());
+        checkerboardPanel.removeAll();
         addPieces();
         addSquares();
         addGhostButtons();
-        this.setContentPane(contentPane);
+        checkerboardPanel.setVisible(true);
+        checkerboardPanel.repaint();
         this.pack();
         this.setVisible(true);
     }
@@ -146,7 +168,7 @@ public class GUI extends JFrame{
                     squares[i].setHighlighted();
                 }
             }
-            contentPane.add(squares[i], c);
+            checkerboardPanel.add(squares[i], c);
         }
     }
 
@@ -168,7 +190,7 @@ public class GUI extends JFrame{
                         onPieceClick(actionEvent);
                     }
                 });
-                contentPane.add(button, c);
+                checkerboardPanel.add(button, c);
             }
         }
     }
@@ -342,6 +364,12 @@ public class GUI extends JFrame{
             if(button.getPiece().getPlayer() == Player.HUMAN){
                 possibleMoves = game.getValidMoves(Player.HUMAN, pos);
                 updateCheckerBoard();
+                if (possibleMoves.size() == 0){
+                    updateText("You can't move here");
+                }
+                else{
+                    updateText("");
+                }
             }
         }
     }
