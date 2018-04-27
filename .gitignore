@@ -1,4 +1,7 @@
-.idea/* 
+# Mac hidden files
+*.DS_Store
+
+.idea/*
 *.iml
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm

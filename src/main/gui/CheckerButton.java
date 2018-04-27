@@ -37,7 +37,7 @@ public class CheckerButton extends JButton{
         this.setBorder(BorderFactory.createEmptyBorder());
         this.setContentAreaFilled(false);
         setIcon(piece);
-        if (piece.getPlayer() == Player.HUMAN){
+        if (piece.getPlayer() == Player.HUMAN && Settings.dragDrop){
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent mouseEvent) {

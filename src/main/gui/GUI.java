@@ -50,10 +50,13 @@ public class GUI extends JFrame{
         JSlider slider = new JSlider();
         slider.setMajorTickSpacing(1);
         slider.setPaintTicks(true);
-        slider.setPaintLabels(true);
-        slider.setMaximum(12);
-        slider.setMinimum(1);
+        slider.setPaintLabels(false);
+        slider.setSnapToTicks(true);
+        slider.setMaximum(10);
+        slider.setMinimum(2);
+        slider.setMajorTickSpacing(2);
         slider.setValue(Settings.AI_DEPTH);
+
         // force takes option
         JRadioButton forceTakesButton = new JRadioButton("Force Takes");
         forceTakesButton.setSelected(Settings.FORCETAKES);
@@ -77,6 +80,7 @@ public class GUI extends JFrame{
         // process results
         if(result == JOptionPane.OK_OPTION){
             Settings.AI_DEPTH = slider.getValue();
+            System.out.println("AI depth = " + Settings.AI_DEPTH);
             Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
             Settings.FORCETAKES = forceTakesButton.isSelected();
         }
@@ -302,10 +306,12 @@ public class GUI extends JFrame{
     }
 
     private void onHintClick(){
-        AI ai = new AI(10, Player.HUMAN);
-        helpMoves = null;
-        hintMove = ai.move(this.game.getState(), Player.HUMAN);
-        updateCheckerBoard();
+        if (!game.isGameOver()){
+            AI ai = new AI(10, Player.HUMAN);
+            helpMoves = null;
+            hintMove = ai.move(this.game.getState(), Player.HUMAN);
+            updateCheckerBoard();
+        }
     }
 
     private void onHelpMovablesClick(){
@@ -322,6 +328,7 @@ public class GUI extends JFrame{
     private void onHintModeClick(){
         main.gui.Settings.hintMode = !main.gui.Settings.hintMode;
         System.out.println("hint mode: " + main.gui.Settings.hintMode);
+        onHintClick();
     }
 
     /**
@@ -329,7 +336,7 @@ public class GUI extends JFrame{
      * @param actionEvent
      */
     private void onPieceClick(ActionEvent actionEvent){
-        if(game.getTurn() == Player.HUMAN && (main.gui.Settings.helpMode)  ){
+        if(game.getTurn() == Player.HUMAN ){
             CheckerButton button = (CheckerButton) actionEvent.getSource();
             int pos = button.getPosition();
             if(button.getPiece().getPlayer() == Player.HUMAN){
