@@ -83,7 +83,7 @@ public class CheckerButton extends JButton{
                 if (piece.isKing()) {
                     buttonIcon = ImageIO.read(new File("images/blackking.png"));
                 } else {
-                    buttonIcon = ImageIO.read(new File("images/blackchecker.png"));
+                    buttonIcon = ImageIO.read(new File("images/blackchecker.gif"));
                 }
             }
             else {
