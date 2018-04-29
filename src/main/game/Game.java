@@ -54,16 +54,28 @@ public class Game{
                 updateState(succ);
                 return MoveFeedback.SUCCESS;
             }
-        }
-        // TODO work out what went wrong
-        if (dy > 1){
+        }    if (dy > 1){
             return MoveFeedback.NO_BACKWARD_MOVES_FOR_SINGLES;
         }
         if (Math.abs(dx)== 2){
             return MoveFeedback.ONLY_SINGLE_DIAGONALS;
         }
         return MoveFeedback.UNKNOWN_INVALID;
+    }
 
+    public MoveFeedback moveFeedbackClick(int pos){
+        ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(Player.HUMAN, true);
+        if (jumpSuccessors.size() > 0){
+            return MoveFeedback.FORCED_JUMP;
+        }
+        else{
+            return MoveFeedback.PIECE_BLOCKED;
+        }
+
+    }
+
+    public ArrayList<BoardState> getValidMoves(Player player, int pos) {
+        return state.peek().getSuccessors(player, pos);
     }
 
     public void aiMove(){
@@ -85,9 +97,6 @@ public class Game{
         return state.peek();
     }
 
-    public ArrayList<BoardState> getValidMoves(Player player, int pos) {
-        return state.peek().getSuccessors(player, pos);
-    }
 
     public Player getTurn() {
         return state.peek().getTurn();

@@ -365,7 +365,12 @@ public class GUI extends JFrame{
                 possibleMoves = game.getValidMoves(Player.HUMAN, pos);
                 updateCheckerBoard();
                 if (possibleMoves.size() == 0){
-                    updateText("You can't move here");
+                    MoveFeedback feedback = game.moveFeedbackClick(pos);
+                    updateText(feedback.toString());
+                    if (feedback == MoveFeedback.FORCED_JUMP){
+                        // show movable jump pieces
+                        onHelpMovablesClick();
+                    }
                 }
                 else{
                     updateText("");
