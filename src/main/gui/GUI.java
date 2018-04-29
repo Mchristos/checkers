@@ -395,9 +395,20 @@ public class GUI extends JFrame{
                 @Override
                 public void run() {
                     aiMove();
+                    if (game.isGameOver()){
+                        gameOver();
+                    }
                 }
             });
         }
+    }
+
+    private void gameOver(){
+        JOptionPane.showMessageDialog(this,
+                game.getGameOverMessage(),
+                "",
+                JOptionPane.INFORMATION_MESSAGE );
+        onRestartClick();
     }
 
     private void aiMove(){

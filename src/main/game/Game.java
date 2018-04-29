@@ -8,6 +8,7 @@ public class Game{
     private Stack<BoardState> state;
     private int memory;
     private AI ai;
+    private boolean humanWon;
 
     public Game(){
         memory = Settings.UNDO_MEMORY;
@@ -103,7 +104,23 @@ public class Game{
     }
 
     public boolean isGameOver(){
-        return state.peek().isGameOver();
+        boolean isOver = state.peek().isGameOver();
+        if (isOver){
+            // get win / lose status
+            humanWon = state.peek().pieceCount.get(Player.AI) == 0 ? true : false;
+        }
+        return isOver;
+    }
+
+    public String getGameOverMessage(){
+        String result = "Game Over. ";
+        if (humanWon == true){
+            result += "YOU WIN!";
+        }
+        else{
+            result += "YOU LOSE!";
+        }
+        return result;
     }
 
     public void undo(){
