@@ -338,7 +338,7 @@ public class GUI extends JFrame{
 
     private void onHelpMovablesClick(){
         hintMove = null;
-        helpMoves = game.getState().getSuccessors(Player.HUMAN).stream().map(x -> x.getFromPos()).collect(Collectors.toList());
+        helpMoves = game.getState().getSuccessors().stream().map(x -> x.getFromPos()).collect(Collectors.toList());
         updateCheckerBoard();
     }
 
@@ -362,7 +362,7 @@ public class GUI extends JFrame{
             CheckerButton button = (CheckerButton) actionEvent.getSource();
             int pos = button.getPosition();
             if(button.getPiece().getPlayer() == Player.HUMAN){
-                possibleMoves = game.getValidMoves(Player.HUMAN, pos);
+                possibleMoves = game.getValidMoves(pos);
                 updateCheckerBoard();
                 if (possibleMoves.size() == 0){
                     MoveFeedback feedback = game.moveFeedbackClick(pos);

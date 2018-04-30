@@ -43,7 +43,7 @@ public class BoardState {
                 }
             }
         }
-        // count initial pieces 
+        // count initial pieces (generalizable, not hard-coded)
         int aiCount = (int) Arrays.stream(bs.state).filter(x -> x != null).filter(x -> x.getPlayer() == Player.AI).count();
         int humanCount = (int) Arrays.stream(bs.state).filter(x -> x != null).filter(x -> x.getPlayer() == Player.HUMAN).count();
         bs.pieceCount = new HashMap<>();
@@ -82,22 +82,12 @@ public class BoardState {
     }
 
     /**
-     * Second heuristic function: calculates the number of options open to the player.
-     * @param player
-     * @return
-     */
-    public int computeHeuristic2(Player player){
-        return this.getSuccessors(player).size();
-    }
-
-    /**
      * Gets valid successor states for a player
-     * @param player
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Player player){
+    public ArrayList<BoardState> getSuccessors(){
         // compute jump successors
-        ArrayList<BoardState> successors = getSuccessors(player, true);
+        ArrayList<BoardState> successors = getSuccessors(true);
         if (Settings.FORCETAKES){
             if (successors.size() > 0){
                 // return only jump successors if available (forced)
@@ -105,28 +95,27 @@ public class BoardState {
             }
             else{
                 // return non-jump successors (since no jumps available)
-                return getSuccessors(player, false);
+                return getSuccessors(false);
             }
         }
         else{
             // return jump and non-jump successors
-            successors.addAll(getSuccessors(player, false));
+            successors.addAll(getSuccessors(false));
             return successors;
         }
     }
 
     /**
      * Get valid jump or non-jump successor states for a player
-     * @param player
      * @param jump
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Player player, boolean jump){
+    public ArrayList<BoardState> getSuccessors(boolean jump){
         ArrayList<BoardState> result = new ArrayList<>();
         for (int i = 0; i < this.state.length; i++){
             if (state[i] != null){
-                if(state[i].getPlayer() == player){
-                    result.addAll(getSuccessors(player, i, jump));
+                if(state[i].getPlayer() == turn){
+                    result.addAll(getSuccessors(i, jump));
                 }
             }
         }
@@ -135,40 +124,38 @@ public class BoardState {
 
     /**
      * Gets valid successor states for a specific piece on the board
-     * @param player
      * @param position position of piece
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Player player, int position){
+    public ArrayList<BoardState> getSuccessors(int position){
         if (Settings.FORCETAKES){
             // compute jump successors GLOBALLY
-            ArrayList<BoardState> jumps = getSuccessors(player, true);
+            ArrayList<BoardState> jumps = getSuccessors(true);
             if (jumps.size() > 0){
                 // return only jump successors if available (forced)
-                return getSuccessors(player, position, true);
+                return getSuccessors(position, true);
             }
             else{
                 // return non-jump successors (since no jumps available)
-                return getSuccessors(player, position, false);
+                return getSuccessors(position, false);
             }
         }
         else{
             // return jump and non-jump successors
             ArrayList<BoardState> result = new ArrayList<>();
-            result.addAll(getSuccessors(player, position, true));
-            result.addAll(getSuccessors(player, position, false));
+            result.addAll(getSuccessors(position, true));
+            result.addAll(getSuccessors(position, false));
             return result;
         }
     }
 
     /**
      * Get valid jump or non-jump successor states for a specific piece on the board.
-     * @param player
      * @param position
      * @return
      */
-    public ArrayList<BoardState> getSuccessors(Player player, int position, boolean jump){
-        if (this.getPiece(position).getPlayer() != player){
+    public ArrayList<BoardState> getSuccessors(int position, boolean jump){
+        if (this.getPiece(position).getPlayer() != turn){
             throw new IllegalArgumentException("No such piece at that position");
         }
         Piece piece = this.state[position];

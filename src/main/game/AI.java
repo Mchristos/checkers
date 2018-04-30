@@ -19,8 +19,13 @@ public class AI {
     }
 
     public BoardState move(BoardState state, Player player){
-        ArrayList<BoardState> successors = state.getSuccessors(player);
-        return minimaxMove(successors);
+        if (state.getTurn()==player){
+            ArrayList<BoardState> successors = state.getSuccessors();
+            return minimaxMove(successors);
+        }
+        else{
+            throw new RuntimeException("Invalid player");
+        }
     }
 
     private BoardState minimaxMove(ArrayList<BoardState> successors){
@@ -74,7 +79,7 @@ public class AI {
         if (node.getTurn() == player){ // MAX
             // AI tries to maximize this value
             int v = Integer.MIN_VALUE;
-            for (BoardState child : node.getSuccessors(player)){
+            for (BoardState child : node.getSuccessors()){
                 v = Math.max(v, minimax(child, depth-1, alpha, beta));
                 alpha = Math.max(alpha, v);
                 if (alpha >= beta){
@@ -86,7 +91,7 @@ public class AI {
         if (node.getTurn() == player.getOpposite()){ // MIN
             // human tries to minimize this value
             int v = Integer.MAX_VALUE;
-            for (BoardState child : node.getSuccessors(player.getOpposite())){
+            for (BoardState child : node.getSuccessors()){
                 v = Math.min(v,minimax(child, depth-1, alpha, beta));
                 beta = Math.min(beta, v);
                 if (alpha >= beta){
