@@ -38,7 +38,7 @@ public class BoardState {
                     bs.state[i] = new Piece(Player.AI, false);
                 }
                 // Human pieces in last 3 rows
-                else if (y  == 4){
+                else if (y  > 4){
                     bs.state[i] = new Piece(Player.HUMAN, false);
                 }
             }
