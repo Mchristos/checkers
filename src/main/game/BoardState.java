@@ -20,7 +20,6 @@ public class BoardState {
 
     public BoardState(){
         state = new Piece[BoardState.NO_SQUARES];
-        turn = Settings.FIRSTMOVE;
     }
 
     /**
@@ -28,6 +27,7 @@ public class BoardState {
      */
     public static BoardState InitialState(){
         BoardState bs = new BoardState();
+        bs.turn = Settings.FIRSTMOVE;
         for (int i = 0; i < bs.state.length; i++){
             int y = i/SIDE_LENGTH;
             int x = i % SIDE_LENGTH;
