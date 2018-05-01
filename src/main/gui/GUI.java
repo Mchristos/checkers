@@ -5,7 +5,7 @@ import main.game.Settings;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,8 +24,14 @@ public class GUI extends JFrame{
     // hint feature
     private BoardState hintMove;
     private List<Integer> helpMoves;
+    private HashMap<Integer, Integer> difficultyMapping;
 
     public GUI(){
+        difficultyMapping = new HashMap<>();
+        difficultyMapping.put(1,6);
+        difficultyMapping.put(2, 8);
+        difficultyMapping.put(3, 10);
+        difficultyMapping.put(4, 12);
         start();
     }
 
@@ -49,13 +55,19 @@ public class GUI extends JFrame{
         // difficulty slider
         JLabel text1 = new JLabel("Set Difficulty", 10);
         JSlider slider = new JSlider();
-        slider.setMajorTickSpacing(1);
-        slider.setPaintTicks(true);
-        slider.setPaintLabels(false);
         slider.setSnapToTicks(true);
-        slider.setMaximum(10);
-        slider.setMinimum(2);
-        slider.setMajorTickSpacing(2);
+        slider.setMaximum(4);
+        slider.setMinimum(1);
+        slider.setMajorTickSpacing(1);
+        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+        labels.put(1, new JLabel("Easy"));
+        labels.put(2, new JLabel("Medium"));
+        labels.put(3, new JLabel("Hard"));
+        labels.put(4, new JLabel("On Fire"));
+        slider.setLabelTable(labels);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setPreferredSize(new Dimension(200,50));
         slider.setValue(Settings.AI_DEPTH);
 
         // force takes option
@@ -80,7 +92,7 @@ public class GUI extends JFrame{
                      JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         // process results
         if(result == JOptionPane.OK_OPTION){
-            Settings.AI_DEPTH = slider.getValue();
+            Settings.AI_DEPTH =  difficultyMapping.get(slider.getValue());
             System.out.println("AI depth = " + Settings.AI_DEPTH);
             Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
             Settings.FORCETAKES = forceTakesButton.isSelected();
