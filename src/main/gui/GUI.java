@@ -420,7 +420,6 @@ public class GUI extends JFrame{
                 game.getGameOverMessage(),
                 "",
                 JOptionPane.INFORMATION_MESSAGE );
-        onRestartClick();
     }
 
     private void aiMove(){
