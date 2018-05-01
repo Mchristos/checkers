@@ -6,13 +6,17 @@ import java.util.HashMap;
 
 public class BoardState {
 
+    // side length of the board
     public static final int SIDE_LENGTH = 8;
     public static final int NO_SQUARES = SIDE_LENGTH*SIDE_LENGTH; // 8 x 8
+    // state of the board
     Piece[] state;
-    // stores the destination position of the most recent move to get to this state.
+    // origin and destination position of the most recent move
     private int fromPos = -1;
     private int toPos = -1;
+    // origin position of double jump move, used to invalidate other moves during multi-move
     private int doublejumpPos = -1;
+    // player's turn
     private Player turn;
     // track number of human/AI pieces on board
     public HashMap<Player, Integer> pieceCount;
@@ -62,8 +66,7 @@ public class BoardState {
     }
 
     /**
-     * Compute heuristic indicating how desirable this state is to a given player. Computed as number of pieces minus
-     * number of opponent pieces, with king pieces counted double.
+     * Compute heuristic indicating how desirable this state is to a given player.
      * @param player
      * @return
      */
@@ -123,8 +126,8 @@ public class BoardState {
     }
 
     /**
-     * Gets valid successor states for a specific piece on the board
-     * @param position position of piece
+     * Gets valid successor states for a specific position on the board
+     * @param position
      * @return
      */
     public ArrayList<BoardState> getSuccessors(int position){
@@ -167,6 +170,12 @@ public class BoardState {
         }
     }
 
+    /**
+     * Gets valid non-jump moves at a given position for a given piece
+     * @param piece
+     * @param position
+     * @return
+     */
     private ArrayList<BoardState> nonJumpSuccessors(Piece piece, int position){
         ArrayList<BoardState> result = new ArrayList<>();
         int x = position % SIDE_LENGTH;
@@ -189,6 +198,12 @@ public class BoardState {
         return result;
     }
 
+    /**
+     * Gets valid jump moves at a given position for a given piece
+     * @param piece
+     * @param position
+     * @return
+     */
     private ArrayList<BoardState> jumpSuccessors(Piece piece, int position){
         ArrayList<BoardState> result = new ArrayList<>();
         // no other jump moves are valid while doing double jump
@@ -266,13 +281,17 @@ public class BoardState {
     }
 
     /**
-     * Gets the destination position of the most recent move to get to this state.
+     * Gets the destination position of the most recent move.
      * @return
      */
     public int getToPos(){
         return this.toPos;
     }
 
+    /**
+     * Gets the destination position of the most recent move.
+     * @return
+     */
     public int getFromPos(){
         return this.fromPos;
     }
@@ -287,7 +306,7 @@ public class BoardState {
     }
 
     /**
-     * Is the board in a game over state
+     * Is the board in a game over state?
      * @return
      */
     public boolean isGameOver(){
