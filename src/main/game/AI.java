@@ -36,6 +36,9 @@ public class AI {
      * @return
      */
     private BoardState minimaxMove(ArrayList<BoardState> successors){
+        if (successors.size() == 1){
+            return successors.get(0);
+        }
         int bestScore = Integer.MIN_VALUE;
         ArrayList<BoardState> equalBests = new ArrayList<>();
         for (BoardState succ : successors){
