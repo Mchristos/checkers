@@ -107,7 +107,7 @@ public class Game{
         boolean isOver = state.peek().isGameOver();
         if (isOver){
             // get win / lose status
-            humanWon = state.peek().pieceCount.get(Player.AI) == 0 ? true : false;
+            humanWon = state.peek().pieceCount.get(Player.AI) == 0;
         }
         return isOver;
     }
