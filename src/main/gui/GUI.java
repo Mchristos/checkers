@@ -68,8 +68,7 @@ public class GUI extends JFrame{
         slider.setPaintTicks(true);
         slider.setPaintLabels(true);
         slider.setPreferredSize(new Dimension(200,50));
-        slider.setValue(Settings.AI_DEPTH);
-
+        slider.setValue(3);
         // force takes option
         JRadioButton forceTakesButton = new JRadioButton("Force Takes");
         forceTakesButton.setSelected(Settings.FORCETAKES);
