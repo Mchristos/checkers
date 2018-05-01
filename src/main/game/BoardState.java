@@ -71,6 +71,16 @@ public class BoardState {
      * @return
      */
     public int computeHeuristic(Player player){
+        switch (Settings.HEURISTIC){
+            case 1:
+                return heuristic1(player);
+            case 2:
+                return heuristic2(player);
+        }
+        throw new RuntimeException("Invalid heuristic");
+    }
+
+    private int heuristic1(Player player){
         // 'infinite' value for winning
         if (this.pieceCount.get(player.getOpposite()) == 0){
             return Integer.MAX_VALUE;
@@ -80,9 +90,29 @@ public class BoardState {
             return Integer.MIN_VALUE;
         }
         // difference between piece counts with kings counted twice
-        return this.pieceCount.get(player) + this.kingCount.get(player) - this.pieceCount.get(player.getOpposite())
-                - this.kingCount.get(player.getOpposite());
+        return pieceScore(player) - pieceScore(player.getOpposite());
     }
+
+
+    private int heuristic2(Player player){
+        // 'infinite' value for winning
+        if (this.pieceCount.get(player.getOpposite()) == 0){
+            return Integer.MAX_VALUE;
+        }
+        // 'negative infinite' for losing
+        else if (this.pieceCount.get(player) == 0){
+            return Integer.MIN_VALUE;
+        }
+        else{
+            return pieceScore(player)/pieceScore(player.getOpposite());
+        }
+    }
+
+    private int pieceScore(Player player){
+        return this.pieceCount.get(player) + this.kingCount.get(player);
+    }
+
+
 
     /**
      * Gets valid successor states for a player
