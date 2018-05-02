@@ -28,9 +28,9 @@ public class GUI extends JFrame{
 
     public GUI(){
         difficultyMapping = new HashMap<>();
-        difficultyMapping.put(1,6);
-        difficultyMapping.put(2, 8);
-        difficultyMapping.put(3, 10);
+        difficultyMapping.put(1,1);
+        difficultyMapping.put(2, 5);
+        difficultyMapping.put(3, 8);
         difficultyMapping.put(4, 12);
         start();
     }
