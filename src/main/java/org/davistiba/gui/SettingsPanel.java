@@ -18,8 +18,8 @@ public class SettingsPanel {
     /**
      * Gets the correct colour (black/white) for the given player
      *
-     * @param player
-     * @return
+     * @param player current player
+     * @return the colour
      */
     public static Colour getColour(Player player) {
         Colour result = null;

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class GUI extends JFrame {
@@ -30,6 +31,8 @@ public class GUI extends JFrame {
     private final String rulesList = getRulesList();
     private final ScheduledExecutorService executor;
     private final Font MY_HELVETICA;
+
+    private static final Logger logger = Logger.getLogger(GUI.class.getName());
 
     public GUI() {
         this.setTitle("Checkers");
@@ -61,7 +64,7 @@ public class GUI extends JFrame {
         // panel for options
         JPanel panel = new JPanel(new GridLayout(5, 1));
         // difficulty slider
-        JLabel text1 = new JLabel("Set Difficulty", 10);
+        JLabel text1 = new JLabel("Set Difficulty", SwingConstants.LEADING);
         JSlider slider = new JSlider();
         slider.setSnapToTicks(true);
         slider.setMaximum(4);
@@ -105,7 +108,7 @@ public class GUI extends JFrame {
         // process results
         if (result == JOptionPane.OK_OPTION) {
             Settings.AI_DEPTH = difficultyMapping.get(slider.getValue());
-            System.out.println("Selected AI depth = " + Settings.AI_DEPTH);
+            logger.info("Selected AI depth = " + Settings.AI_DEPTH);
             Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
             Settings.FORCETAKES = forceTakesButton.isSelected();
         } else {
@@ -175,7 +178,7 @@ public class GUI extends JFrame {
     }
 
     private void addSquares() {
-        squares = new SquarePanel[BoardState.NO_SQUARES];
+        squares = new SquarePanel[BoardState.NUM_SQUARES];
         int fromPos = -1;
         int toPos = -1;
         if (hintMove != null) {
@@ -183,7 +186,7 @@ public class GUI extends JFrame {
             toPos = hintMove.getToPos();
         }
         GridBagConstraints c = new GridBagConstraints();
-        for (int i = 0; i < BoardState.NO_SQUARES; i++) {
+        for (int i = 0; i < BoardState.NUM_SQUARES; i++) {
             c.gridx = i % BoardState.SIDE_LENGTH;
             c.gridy = i / BoardState.SIDE_LENGTH;
             squares[i] = new SquarePanel(c.gridx, c.gridy);
@@ -209,7 +212,7 @@ public class GUI extends JFrame {
     private void addPieces() {
         GridBagConstraints c = new GridBagConstraints();
         game.getState();
-        for (int i = 0; i < BoardState.NO_SQUARES; i++) {
+        for (int i = 0; i < BoardState.NUM_SQUARES; i++) {
             game.getState();
             c.gridx = i % BoardState.SIDE_LENGTH;
             game.getState();
@@ -305,7 +308,7 @@ public class GUI extends JFrame {
             aiMove();
         } else {
             updateCheckerBoard();
-            System.out.println(feedback.toString());
+            logger.info(feedback.toString());
         }
     }
 
@@ -326,12 +329,12 @@ public class GUI extends JFrame {
 
     private void onHelpModeClick() {
         SettingsPanel.helpMode = !SettingsPanel.helpMode;
-        System.out.println("help mode: " + SettingsPanel.helpMode);
+        logger.info("help mode: " + SettingsPanel.helpMode);
     }
 
     private void onHintModeClick() {
         SettingsPanel.hintMode = !SettingsPanel.hintMode;
-        System.out.println("hint mode: " + SettingsPanel.hintMode);
+        logger.info("hint mode: " + SettingsPanel.hintMode);
         onHintClick();
     }
 
@@ -347,7 +350,7 @@ public class GUI extends JFrame {
             if (button.getPiece().getPlayer() == Player.HUMAN) {
                 possibleMoves = game.getValidMoves(pos);
                 updateCheckerBoard();
-                if (possibleMoves.size() == 0) {
+                if (possibleMoves.isEmpty()) {
                     MoveFeedback feedback = game.moveFeedbackClick(pos);
                     updateText(feedback.toString());
                     if (feedback == MoveFeedback.FORCED_JUMP) {
@@ -451,7 +454,7 @@ public class GUI extends JFrame {
      * Ask human Player whether they want to replay or exit
      */
     private void gameOverDialog() {
-        Object[] options = {"Yes", "No"};
+        String[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,
                 "Do you want to play again?",
                 game.getGameOverMessage(),

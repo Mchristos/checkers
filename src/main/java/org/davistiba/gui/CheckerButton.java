@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Black or white checker piece (clickable button component)
@@ -114,10 +115,9 @@ public class CheckerButton extends JButton {
      * @param fileName name of file
      * @return InputStream of data
      */
-    protected static InputStream getImageResource(final String fileName) {
-        return CheckerButton.class.getClassLoader().getResourceAsStream(fileName);
+    protected static URL getImageResource(final String fileName) {
+        return CheckerButton.class.getClassLoader().getResource(fileName);
     }
-
 
     private void setCustomIcon(Piece piece) {
         BufferedImage buttonIcon = null;
@@ -141,7 +141,7 @@ public class CheckerButton extends JButton {
         }
 
         if (buttonIcon != null) {
-            Image resized = buttonIcon.getScaledInstance(SettingsPanel.checkerWidth, SettingsPanel.checkerHeight, 100);
+            Image resized = buttonIcon.getScaledInstance(SettingsPanel.checkerWidth, SettingsPanel.checkerHeight, Image.SCALE_DEFAULT);
             ImageIcon icon = new ImageIcon(resized);
             this.setIcon(icon);
         }

@@ -8,13 +8,12 @@ import org.junit.runners.Parameterized;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(value = Parameterized.class)
 public class CheckerButtonTest {
-
-    private InputStream inputStream = null;
 
     @Parameterized.Parameter
     public String fileName;
@@ -31,13 +30,9 @@ public class CheckerButtonTest {
 
     @Test
     public void test_getImageResource() {
-        inputStream = CheckerButton.getImageResource(fileName);
-        Assert.assertNotNull("Image file missing", inputStream);
+        URL path = CheckerButton.getImageResource(fileName);
+        Assert.assertNotNull("Image file missing", path);
     }
 
-    @After
-    public void tearDown() throws IOException {
-        inputStream.close();
-    }
 
 }

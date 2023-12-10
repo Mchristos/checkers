@@ -13,7 +13,7 @@ public class Game {
     public Game() {
         memory = Settings.UNDO_MEMORY;
         state = new Stack<>();
-        state.push(BoardState.InitialState());
+        state.push(BoardState.initialState());
         ai = new AI();
     }
 
@@ -30,7 +30,7 @@ public class Game {
         }
         // check for forced jumped
         ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(true);
-        boolean jumps = jumpSuccessors.size() > 0;
+        boolean jumps = !jumpSuccessors.isEmpty();
         if (jumps) {
             for (BoardState succ : jumpSuccessors) {
                 if (succ.getFromPos() == fromPos && succ.getToPos() == toPos) {
@@ -67,7 +67,7 @@ public class Game {
 
     public MoveFeedback moveFeedbackClick(int pos) {
         ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(true);
-        if (jumpSuccessors.size() > 0) {
+        if (!jumpSuccessors.isEmpty()) {
             return MoveFeedback.FORCED_JUMP;
         } else {
             return MoveFeedback.PIECE_BLOCKED;

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Button representing a possible move for a player
@@ -24,8 +25,8 @@ public class GhostButton extends JButton {
         setIcon();
     }
 
-    private static InputStream getImageResource(final String fileName) {
-        return GhostButton.class.getClassLoader().getResourceAsStream(fileName);
+    private static URL getImageResource(final String fileName) {
+        return GhostButton.class.getClassLoader().getResource(fileName);
     }
 
     private void setIcon() {
@@ -40,7 +41,7 @@ public class GhostButton extends JButton {
             System.err.println(e.getMessage());
         }
         if (buttonIcon != null) {
-            Image resized = buttonIcon.getScaledInstance(SettingsPanel.ghostButtonWidth, SettingsPanel.ghostButtonHeight, 100);
+            Image resized = buttonIcon.getScaledInstance(SettingsPanel.ghostButtonWidth, SettingsPanel.ghostButtonHeight, Image.SCALE_DEFAULT);
             ImageIcon icon = new ImageIcon(resized);
             this.setIcon(icon);
         }

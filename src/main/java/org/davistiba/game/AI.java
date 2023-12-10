@@ -67,7 +67,7 @@ public class AI {
      * @return
      */
     private BoardState randomMove(ArrayList<BoardState> successors) {
-        if (successors.size() < 1) {
+        if (successors.isEmpty()) {
             throw new RuntimeException("Can't randomly choose from empty list.");
         }
         ThreadLocalRandom rand = ThreadLocalRandom.current();

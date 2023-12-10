@@ -9,7 +9,7 @@ public class BoardState {
 
     // side length of the board
     public static final int SIDE_LENGTH = 8;
-    public static final int NO_SQUARES = SIDE_LENGTH * SIDE_LENGTH; // 8 x 8
+    public static final int NUM_SQUARES = SIDE_LENGTH * SIDE_LENGTH; // 8 x 8
     // state of the board
     Piece[] state;
     // origin and destination position of the most recent move
@@ -24,13 +24,13 @@ public class BoardState {
     private HashMap<Player, Integer> kingCount;
 
     public BoardState() {
-        state = new Piece[BoardState.NO_SQUARES];
+        state = new Piece[BoardState.NUM_SQUARES];
     }
 
     /**
      * Set up initial board state.
      */
-    public static BoardState InitialState() {
+    public static BoardState initialState() {
         BoardState bs = new BoardState();
         bs.turn = Settings.FIRSTMOVE;
         for (int i = 0; i < bs.state.length; i++) {
@@ -69,8 +69,8 @@ public class BoardState {
     /**
      * Compute heuristic indicating how desirable this state is to a given player.
      *
-     * @param player currentPlayear
-     * @return
+     * @param player current Player
+     * @return level
      */
     public int computeHeuristic(Player player) {
         switch (Settings.HEURISTIC) {
@@ -123,7 +123,7 @@ public class BoardState {
         // compute jump successors
         ArrayList<BoardState> successors = getSuccessors(true);
         if (Settings.FORCETAKES) {
-            if (successors.size() > 0) {
+            if (!successors.isEmpty()) {
                 // return only jump successors if available (forced)
                 return successors;
             } else {
@@ -140,8 +140,8 @@ public class BoardState {
     /**
      * Get valid jump or non-jump successor states for a player
      *
-     * @param jump
-     * @return
+     * @param jump must jump?
+     * @return list of allowable positions
      */
     public ArrayList<BoardState> getSuccessors(boolean jump) {
         ArrayList<BoardState> result = new ArrayList<>();
@@ -158,14 +158,14 @@ public class BoardState {
     /**
      * Gets valid successor states for a specific position on the board
      *
-     * @param position
-     * @return
+     * @param position target
+     * @return list of allowable states
      */
     public ArrayList<BoardState> getSuccessors(int position) {
         if (Settings.FORCETAKES) {
             // compute jump successors GLOBALLY
             ArrayList<BoardState> jumps = getSuccessors(true);
-            if (jumps.size() > 0) {
+            if (!jumps.isEmpty()) {
                 // return only jump successors if available (forced)
                 return getSuccessors(position, true);
             } else {
@@ -184,8 +184,9 @@ public class BoardState {
     /**
      * Get valid jump or non-jump successor states for a specific piece on the board.
      *
-     * @param position
-     * @return
+     * @param position target position
+     * @param jump must jump?
+     * @return valid states
      */
     public ArrayList<BoardState> getSuccessors(int position, boolean jump) {
         if (this.getPiece(position).getPlayer() != turn) {
@@ -202,9 +203,9 @@ public class BoardState {
     /**
      * Gets valid non-jump moves at a given position for a given piece
      *
-     * @param piece
-     * @param position
-     * @return
+     * @param piece current piece
+     * @param position target position
+     * @return list of valid states
      */
     private ArrayList<BoardState> nonJumpSuccessors(Piece piece, int position) {
         ArrayList<BoardState> result = new ArrayList<>();
@@ -231,9 +232,9 @@ public class BoardState {
     /**
      * Gets valid jump moves at a given position for a given piece
      *
-     * @param piece
-     * @param position
-     * @return
+     * @param piece current piece
+     * @param position target position
+     * @return list of valid states
      */
     private ArrayList<BoardState> jumpSuccessors(Piece piece, int position) {
         ArrayList<BoardState> result = new ArrayList<>();
@@ -294,7 +295,7 @@ public class BoardState {
             result.state[newPos - SIDE_LENGTH * dy - dx] = null;
             result.pieceCount.replace(oppPlayer, result.pieceCount.get(oppPlayer) - 1);
             // is another jump available? (not allowed if just converted into king)
-            if (result.jumpSuccessors(piece, newPos).size() > 0 && !kingConversion) {
+            if (!result.jumpSuccessors(piece, newPos).isEmpty() && !kingConversion) {
                 // don't swap turns
                 result.turn = piece.getPlayer();
                 // remember double jump position

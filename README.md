@@ -1,6 +1,6 @@
 # checkers
 
-A checkers game written in Java/Swing. Requires Java 8 or higher
+A checkers game written in Java/Swing. Requires Java JDK 8 or higher.
 
 AI implemented using the minimax algorithm and alpha-beta pruning.
 
@@ -18,9 +18,8 @@ AI implemented using the minimax algorithm and alpha-beta pruning.
 ## Build a runnable JAR
 
 1. Fork or download the repo. Navigate to project directory.
-2. Open terminal or powershell, run the following command:
-
-```bash
-./mvnw clean package
-```
+2. Open terminal or Powershell, run the following command:
+    ```bash
+    ./mvnw clean package
+    ```
 3. The result JAR will be found in `target/` folder. Double click it to start.
