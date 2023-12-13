@@ -1,4 +1,4 @@
-package main.game;
+package org.davistiba.game;
 
 public class Settings {
     public static boolean FORCETAKES = true; //

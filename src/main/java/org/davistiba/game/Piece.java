@@ -1,11 +1,11 @@
-package main.game;
+package org.davistiba.game;
 
 public class Piece {
 
-    private Player player;
-    private boolean king;
+    private final Player player;
+    private final boolean king;
 
-    public Piece(Player player, boolean king){
+    public Piece(Player player, boolean king) {
         this.player = player;
         this.king = king;
     }
@@ -20,15 +20,15 @@ public class Piece {
 
     /**
      * Get possible y-direction movements
+     *
      * @return
      */
-    public int[] getYMovements(){
+    public int[] getYMovements() {
         int[] result = new int[]{};
-        if (king){
-            result = new int[]{-1,1};
-        }
-        else{
-            switch (player){
+        if (king) {
+            result = new int[]{-1, 1};
+        } else {
+            switch (player) {
                 case AI:
                     result = new int[]{1};
                     break;
@@ -42,10 +42,11 @@ public class Piece {
 
     /**
      * Get possible x-direction movements
+     *
      * @return
      */
-    public int[] getXMovements(){
-        return new int[]{-1,1};
+    public int[] getXMovements() {
+        return new int[]{-1, 1};
     }
 
 }

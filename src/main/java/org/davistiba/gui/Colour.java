@@ -1,18 +1,17 @@
-package main.gui;
+package org.davistiba.gui;
 
 public enum Colour {
     WHITE,
     BLACK;
 
-    public Colour getOpposite(){
+    public Colour getOpposite() {
         Colour result = null;
-        if (this == WHITE){
+        if (this == WHITE) {
             result = BLACK;
-        }
-        else if (this == BLACK){
+        } else if (this == BLACK) {
             result = WHITE;
         }
-        if(result == null){
+        if (result == null) {
             throw new RuntimeException("Null piece has no opposite");
         }
         return result;

@@ -1,4 +1,4 @@
-package main.game;
+package org.davistiba.game;
 
 public enum Player {
     AI,
@@ -8,11 +8,10 @@ public enum Player {
         Player result = null;
         if (this == AI) {
             result = HUMAN;
-        }
-        else if (this == HUMAN) {
+        } else if (this == HUMAN) {
             result = AI;
         }
-        if (result == null){
+        if (result == null) {
             throw new RuntimeException("Null player has no opposite.");
         }
         return result;
