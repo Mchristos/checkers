@@ -1,13 +1,10 @@
 package org.davistiba.gui;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,8 +16,8 @@ public class CheckerButtonTest {
     public String fileName;
 
     @Parameterized.Parameters(name = "{index}: checkFile {0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
+    public static Collection<String[]> data() {
+        return Arrays.asList(new String[][]{
                 {"images/blackchecker.gif"},
                 {"images/blackking.png"},
                 {"images/whiteking.png"},

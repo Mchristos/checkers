@@ -26,7 +26,7 @@
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
-        <!--        CUSTOM THEMES -->
+        <!--    UNCOMMENT ME FOR CUSTOM THEMES -->
         <!--        <dependency>
                     <groupId>com.formdev</groupId>
                     <artifactId>flatlaf</artifactId>
