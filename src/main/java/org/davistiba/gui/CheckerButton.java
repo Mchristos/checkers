@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -121,9 +120,9 @@ public class CheckerButton extends JButton {
 
     private void setCustomIcon(Piece piece) {
         BufferedImage buttonIcon = null;
-        Colour colour = SettingsPanel.getColour(piece.getPlayer());
+        PieceColour pieceColour = SettingsPanel.getColour(piece.getPlayer());
         try {
-            if (colour == Colour.BLACK) {
+            if (pieceColour == PieceColour.BLACK) {
                 if (piece.isKing()) {
                     buttonIcon = ImageIO.read(getImageResource("images/blackking.png"));
                 } else {

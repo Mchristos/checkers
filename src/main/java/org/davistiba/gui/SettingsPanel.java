@@ -4,7 +4,7 @@ import org.davistiba.game.Player;
 
 public class SettingsPanel {
 
-    public static Colour AIcolour = Colour.BLACK; // Note: starting player gets white pieces
+    public static PieceColour AIcolour = PieceColour.BLACK; // Note: starting player gets white pieces
     public static boolean helpMode = true;
     public static boolean hintMode = false;
     public static boolean dragDrop = false;
@@ -21,8 +21,8 @@ public class SettingsPanel {
      * @param player current player
      * @return the colour
      */
-    public static Colour getColour(Player player) {
-        Colour result = null;
+    public static PieceColour getColour(Player player) {
+        PieceColour result = null;
         if (player == Player.AI) {
             result = AIcolour;
         } else if (player == Player.HUMAN) {

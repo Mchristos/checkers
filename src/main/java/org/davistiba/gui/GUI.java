@@ -124,10 +124,10 @@ public class GUI extends JFrame {
     public void setup() {
         switch (Settings.FIRSTMOVE) {
             case AI:
-                SettingsPanel.AIcolour = Colour.WHITE;
+                SettingsPanel.AIcolour = PieceColour.WHITE;
                 break;
             case HUMAN:
-                SettingsPanel.AIcolour = Colour.BLACK;
+                SettingsPanel.AIcolour = PieceColour.BLACK;
                 break;
         }
 
@@ -417,7 +417,7 @@ public class GUI extends JFrame {
      * Open dialog for restarting the program.
      */
     private void onRestartClick() {
-        Object[] options = {"Yes", "No"};
+        String[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this, "Are you sure you want to restart?",
                 "Restart game? ",
                 JOptionPane.YES_NO_OPTION,
@@ -434,7 +434,7 @@ public class GUI extends JFrame {
      * Open dialog for quitting the program
      */
     private void onExitClick() {
-        Object[] options = {"Yes", "No"};
+        String[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,
                 "\nAre you sure you want to leave?",
                 "Quit game? ",
