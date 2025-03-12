@@ -1,6 +1,6 @@
 # checkers
 
-A checkers game written in Java/Swing. Requires Java JDK 8 or higher.
+A checkers game written in Java/Swing. Requires Java 17 or higher.
 
 AI implemented using the minimax algorithm and alpha-beta pruning.
 

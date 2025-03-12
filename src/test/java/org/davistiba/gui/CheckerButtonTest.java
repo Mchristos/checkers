@@ -1,35 +1,28 @@
 package org.davistiba.gui;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-@RunWith(value = Parameterized.class)
 public class CheckerButtonTest {
 
-    @Parameterized.Parameter
-    public String fileName;
-
-    @Parameterized.Parameters(name = "{index}: checkFile {0}")
-    public static Collection<String[]> data() {
-        return Arrays.asList(new String[][]{
-                {"images/blackchecker.gif"},
-                {"images/blackking.png"},
-                {"images/whiteking.png"},
-                {"images/whitechecker.gif"}
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of("images/blackchecker.gif"),
+                Arguments.of("images/blackking.png"),
+                Arguments.of("images/whiteking.png"),
+                Arguments.of("images/whitechecker.gif")
+        );
     }
 
-    @Test
-    public void test_getImageResource() {
+    @ParameterizedTest(name = "{index}: checkFile {0}")
+    @MethodSource("data")
+    public void test_getImageResource(String fileName) {
         URL path = CheckerButton.getImageResource(fileName);
-        Assert.assertNotNull("Image file missing", path);
+        Assertions.assertNotNull(path, "Image file missing");
     }
-
-
 }
