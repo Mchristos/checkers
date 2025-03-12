@@ -1,6 +1,6 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.*;
+import org.mchristos.game.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -354,7 +354,7 @@ public class GUI extends JFrame {
                 possibleMoves = game.getValidMoves(pos);
                 updateCheckerBoard();
                 if (possibleMoves.isEmpty()) {
-                    MoveFeedback feedback = game.moveFeedbackClick(pos);
+                    MoveFeedback feedback = game.moveFeedbackClick();
                     updateText(feedback.toString());
                     if (feedback == MoveFeedback.FORCED_JUMP) {
                         // show movable jump pieces

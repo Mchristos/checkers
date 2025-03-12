@@ -1,4 +1,4 @@
-package org.davistiba.game;
+package org.mchristos.game;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -35,7 +35,7 @@ public class AI {
      * Chooses the best successor state based on the minimax algorithm.
      *
      * @param successors list of BoardState
-     * @return
+     * @return best board state
      */
     private BoardState minimaxMove(ArrayList<BoardState> successors) {
         if (successors.size() == 1) {
@@ -64,7 +64,7 @@ public class AI {
      * Chooses a successor state randomly.
      *
      * @param successors list of BoardState
-     * @return
+     * @return random state
      */
     private BoardState randomMove(ArrayList<BoardState> successors) {
         if (successors.isEmpty()) {
@@ -79,9 +79,9 @@ public class AI {
     /**
      * Implements the minimax algorithm with alpha-beta pruning
      *
-     * @param node
-     * @param depth
-     * @return minimax score associated with node
+     * @param node current
+     * @param depth how deep should algorithm go
+     * @return best optimal result
      */
     private int minimax(BoardState node, int depth) {
         // initialize alpha (computed as a max)
@@ -95,11 +95,11 @@ public class AI {
     /**
      * Implements the minimax algorithm with alpha-beta pruning
      *
-     * @param node
-     * @param depth
-     * @param alpha
-     * @param beta
-     * @return
+     * @param node current node
+     * @param depth param alpha
+     * @param alpha param alpha
+     * @param beta param beta
+     * @return best result
      */
     private int minimax(BoardState node, int depth, int alpha, int beta) {
         if (depth == 0 || node.isGameOver()) {

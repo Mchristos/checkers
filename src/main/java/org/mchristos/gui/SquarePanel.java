@@ -1,4 +1,4 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
 import javax.swing.*;
 import java.awt.*;

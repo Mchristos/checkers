@@ -1,6 +1,6 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.BoardState;
+import org.mchristos.game.BoardState;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
