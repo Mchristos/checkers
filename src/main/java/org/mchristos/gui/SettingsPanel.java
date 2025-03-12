@@ -1,6 +1,6 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.Player;
+import org.mchristos.game.Player;
 
 public class SettingsPanel {
 

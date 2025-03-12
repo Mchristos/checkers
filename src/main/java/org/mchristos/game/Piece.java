@@ -1,4 +1,4 @@
-package org.davistiba.game;
+package org.mchristos.game;
 
 public class Piece {
 

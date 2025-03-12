@@ -1,6 +1,6 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.*;
+import org.mchristos.game.*;
 
 import javax.swing.*;
 import java.awt.*;

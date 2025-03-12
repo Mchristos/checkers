@@ -1,7 +1,7 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.Piece;
-import org.davistiba.game.Player;
+import org.mchristos.game.Piece;
+import org.mchristos.game.Player;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
