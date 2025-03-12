@@ -270,6 +270,7 @@ public class GUI extends JFrame {
         JMenuItem rulesItem = new JMenuItem("Game Rules");
         JMenuItem helpItemHint = new JMenuItem("Hint!");
         JMenuItem helpItemMovables = new JMenuItem("Show movable pieces");
+        JMenuItem aboutItem = new JMenuItem("About");
 
         // add action listeners
         quitItem.addActionListener((e) -> onExitClick());
@@ -280,6 +281,7 @@ public class GUI extends JFrame {
         viewItemHintMode.addActionListener(e -> onHintModeClick());
         helpItemHint.addActionListener(e -> onHintClick());
         helpItemMovables.addActionListener(e -> onHelpMovablesClick());
+        aboutItem.addActionListener(e -> onAboutClick());
 
 
         // add components to menu bar
@@ -291,6 +293,7 @@ public class GUI extends JFrame {
         helpMenu.add(helpItemHint);
         helpMenu.add(helpItemMovables);
         helpMenu.add(rulesItem);
+        helpMenu.add(aboutItem);
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
@@ -475,6 +478,17 @@ public class GUI extends JFrame {
     private void onRulesClick() {
         JOptionPane.showMessageDialog(this,
                 "<html><body><p style='width: 400px;'>" + rulesList + "</p></body></html>",
+                "Game Rules",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void onAboutClick() {
+        JOptionPane.showMessageDialog(this,
+                "<html><body><p style='width: 400px;'>" +
+                        "<p>Checkers with AI</p>" +
+                        "<p>(c) 2018, by chris Mchristos </p>" +
+                        "<a href='https://github.com/mchristos/checkers'>https://github.com/mchristos/checkers</a>"
+                        + "</p></body></html>",
                 "Game Rules",
                 JOptionPane.INFORMATION_MESSAGE);
     }

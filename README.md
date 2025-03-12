@@ -13,7 +13,7 @@ AI implemented using the minimax algorithm and alpha-beta pruning.
 - Multiple themes (dark / light from Flatlaf), see [pom.xml](pom.xml)
 
 
-<img width="641" alt="checkers" src="https://user-images.githubusercontent.com/13951953/41507113-c999fad6-7223-11e8-827a-afefd0e318d8.png">
+<img width="641" alt="checkers" src="./src/main/resources/screenshot_checkers.png">
 
 ## Build a runnable JAR
 
