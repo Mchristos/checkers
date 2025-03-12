@@ -21,21 +21,17 @@ public class Piece {
     /**
      * Get possible y-direction movements
      *
-     * @return
+     * @return array of y movements
      */
     public int[] getYMovements() {
         int[] result = new int[]{};
         if (king) {
             result = new int[]{-1, 1};
         } else {
-            switch (player) {
-                case AI:
-                    result = new int[]{1};
-                    break;
-                case HUMAN:
-                    result = new int[]{-1};
-                    break;
-            }
+            result = switch (player) {
+                case AI -> new int[]{1};
+                case HUMAN -> new int[]{-1};
+            };
         }
         return result;
     }
@@ -43,7 +39,7 @@ public class Piece {
     /**
      * Get possible x-direction movements
      *
-     * @return
+     * @return array of x movements
      */
     public int[] getXMovements() {
         return new int[]{-1, 1};

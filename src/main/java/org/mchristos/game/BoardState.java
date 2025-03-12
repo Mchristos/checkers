@@ -117,7 +117,7 @@ public class BoardState {
     /**
      * Gets valid successor states for a player
      *
-     * @return
+     * @return list of successors
      */
     public ArrayList<BoardState> getSuccessors() {
         // compute jump successors
@@ -315,16 +315,16 @@ public class BoardState {
     /**
      * Gets the destination position of the most recent move.
      *
-     * @return
+     * @return target position
      */
     public int getToPos() {
         return this.toPos;
     }
 
     /**
-     * Gets the destination position of the most recent move.
+     * Gets the source position of the most recent move.
      *
-     * @return
+     * @return source position
      */
     public int getFromPos() {
         return this.fromPos;
@@ -334,7 +334,7 @@ public class BoardState {
     /**
      * Gets the player whose turn it is
      *
-     * @return
+     * @return player's turn
      */
     public Player getTurn() {
         return turn;
@@ -343,7 +343,7 @@ public class BoardState {
     /**
      * Is the board in a game over state?
      *
-     * @return
+     * @return true or false
      */
     public boolean isGameOver() {
         return (pieceCount.get(Player.AI) == 0 || pieceCount.get(Player.HUMAN) == 0);
@@ -353,7 +353,7 @@ public class BoardState {
      * Get player piece at given position.
      *
      * @param i Position in board.
-     * @return
+     * @return piece
      */
     public Piece getPiece(int i) {
         return state[i];
@@ -362,9 +362,9 @@ public class BoardState {
     /**
      * Get piece by grid position
      *
-     * @param y
-     * @param x
-     * @return
+     * @param y position
+     * @param x position
+     * @return piece
      */
     private Piece getPiece(int y, int x) {
         return getPiece(SIDE_LENGTH * y + x);
@@ -373,9 +373,9 @@ public class BoardState {
     /**
      * Check if grid indices are valid
      *
-     * @param y
-     * @param x
-     * @return
+     * @param y position
+     * @param x position
+     * @return true or false
      */
     private boolean isValid(int y, int x) {
         return (0 <= y) && (y < SIDE_LENGTH) && (0 <= x) && (x < SIDE_LENGTH);

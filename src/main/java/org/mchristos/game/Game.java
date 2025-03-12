@@ -65,7 +65,7 @@ public class Game {
         return MoveFeedback.UNKNOWN_INVALID;
     }
 
-    public MoveFeedback moveFeedbackClick(int pos) {
+    public MoveFeedback moveFeedbackClick() {
         ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(true);
         if (!jumpSuccessors.isEmpty()) {
             return MoveFeedback.FORCED_JUMP;
