@@ -46,11 +46,15 @@ public class GUI extends JFrame {
         start();
     }
 
+    /**
+     * Start the match
+     */
     private void start() {
         settingsPopup();
         game = new Game();
         possibleMoves = new ArrayList<>();
         hintMove = null;
+        System.gc(); // clear up the unused memory
         setup();
         if (SettingsPanel.hintMode) {
             onHintClick();
@@ -429,7 +433,7 @@ public class GUI extends JFrame {
                 options,
                 options[1]);
         if (n == 0) {
-            start();
+            this.start();
         }
     }
 
