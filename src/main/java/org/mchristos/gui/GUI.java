@@ -43,7 +43,7 @@ public class GUI extends JFrame {
         difficultyMapping.put(4, 12);
         this.executor = Executors.newSingleThreadScheduledExecutor();
         MY_HELVETICA = new Font(Font.DIALOG, Font.PLAIN, 12);
-        start();
+        this.start();
     }
 
     /**
@@ -54,7 +54,7 @@ public class GUI extends JFrame {
         game = new Game();
         possibleMoves = new ArrayList<>();
         hintMove = null;
-        System.gc(); // clear up the unused memory
+        System.gc(); // clear up previous match memory
         setup();
         if (SettingsPanel.hintMode) {
             onHintClick();
