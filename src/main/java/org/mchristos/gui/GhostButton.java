@@ -1,13 +1,12 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.BoardState;
+import org.mchristos.game.BoardState;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 /**

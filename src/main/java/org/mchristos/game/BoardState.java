@@ -1,4 +1,4 @@
-package org.davistiba.game;
+package org.mchristos.game;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +32,7 @@ public class BoardState {
      */
     public static BoardState initialState() {
         BoardState bs = new BoardState();
-        bs.turn = Settings.FIRSTMOVE;
+        bs.turn = GlobalSettings.FIRSTMOVE;
         for (int i = 0; i < bs.state.length; i++) {
             int y = i / SIDE_LENGTH;
             int x = i % SIDE_LENGTH;
@@ -73,7 +73,7 @@ public class BoardState {
      * @return level
      */
     public int computeHeuristic(Player player) {
-        switch (Settings.HEURISTIC) {
+        switch (GlobalSettings.HEURISTIC) {
             case 1:
                 return heuristic1(player);
             case 2:
@@ -117,12 +117,12 @@ public class BoardState {
     /**
      * Gets valid successor states for a player
      *
-     * @return
+     * @return list of successors
      */
     public ArrayList<BoardState> getSuccessors() {
         // compute jump successors
         ArrayList<BoardState> successors = getSuccessors(true);
-        if (Settings.FORCETAKES) {
+        if (GlobalSettings.FORCETAKES) {
             if (!successors.isEmpty()) {
                 // return only jump successors if available (forced)
                 return successors;
@@ -162,7 +162,7 @@ public class BoardState {
      * @return list of allowable states
      */
     public ArrayList<BoardState> getSuccessors(int position) {
-        if (Settings.FORCETAKES) {
+        if (GlobalSettings.FORCETAKES) {
             // compute jump successors GLOBALLY
             ArrayList<BoardState> jumps = getSuccessors(true);
             if (!jumps.isEmpty()) {
@@ -315,16 +315,16 @@ public class BoardState {
     /**
      * Gets the destination position of the most recent move.
      *
-     * @return
+     * @return target position
      */
     public int getToPos() {
         return this.toPos;
     }
 
     /**
-     * Gets the destination position of the most recent move.
+     * Gets the source position of the most recent move.
      *
-     * @return
+     * @return source position
      */
     public int getFromPos() {
         return this.fromPos;
@@ -334,7 +334,7 @@ public class BoardState {
     /**
      * Gets the player whose turn it is
      *
-     * @return
+     * @return player's turn
      */
     public Player getTurn() {
         return turn;
@@ -343,7 +343,7 @@ public class BoardState {
     /**
      * Is the board in a game over state?
      *
-     * @return
+     * @return true or false
      */
     public boolean isGameOver() {
         return (pieceCount.get(Player.AI) == 0 || pieceCount.get(Player.HUMAN) == 0);
@@ -353,7 +353,7 @@ public class BoardState {
      * Get player piece at given position.
      *
      * @param i Position in board.
-     * @return
+     * @return piece
      */
     public Piece getPiece(int i) {
         return state[i];
@@ -362,9 +362,9 @@ public class BoardState {
     /**
      * Get piece by grid position
      *
-     * @param y
-     * @param x
-     * @return
+     * @param y position
+     * @param x position
+     * @return piece
      */
     private Piece getPiece(int y, int x) {
         return getPiece(SIDE_LENGTH * y + x);
@@ -373,9 +373,9 @@ public class BoardState {
     /**
      * Check if grid indices are valid
      *
-     * @param y
-     * @param x
-     * @return
+     * @param y position
+     * @param x position
+     * @return true or false
      */
     private boolean isValid(int y, int x) {
         return (0 <= y) && (y < SIDE_LENGTH) && (0 <= x) && (x < SIDE_LENGTH);

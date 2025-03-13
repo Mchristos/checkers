@@ -1,6 +1,6 @@
-package org.davistiba.gui;
+package org.mchristos.gui;
 
-import org.davistiba.game.*;
+import org.mchristos.game.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,14 +43,18 @@ public class GUI extends JFrame {
         difficultyMapping.put(4, 12);
         this.executor = Executors.newSingleThreadScheduledExecutor();
         MY_HELVETICA = new Font(Font.DIALOG, Font.PLAIN, 12);
-        start();
+        this.start();
     }
 
+    /**
+     * Start the match
+     */
     private void start() {
         settingsPopup();
         game = new Game();
         possibleMoves = new ArrayList<>();
         hintMove = null;
+        System.gc(); // clear up previous match memory
         setup();
         if (SettingsPanel.hintMode) {
             onHintClick();
@@ -87,15 +91,15 @@ public class GUI extends JFrame {
         slider.setValue(3);
         // force takes option
         JRadioButton forceTakesButton = new JRadioButton("Force Takes");
-        forceTakesButton.setSelected(Settings.FORCETAKES);
+        forceTakesButton.setSelected(GlobalSettings.FORCETAKES);
         // who gets first move?
         ButtonGroup buttonGroup = new ButtonGroup();
         JRadioButton humanFirstRadioButton = new JRadioButton("You Play First");
         JRadioButton aiRadioButton = new JRadioButton("Computer Plays First");
         buttonGroup.add(humanFirstRadioButton);
         buttonGroup.add(aiRadioButton);
-        aiRadioButton.setSelected(Settings.FIRSTMOVE == Player.AI);
-        humanFirstRadioButton.setSelected(Settings.FIRSTMOVE == Player.HUMAN);
+        aiRadioButton.setSelected(GlobalSettings.FIRSTMOVE == Player.AI);
+        humanFirstRadioButton.setSelected(GlobalSettings.FIRSTMOVE == Player.HUMAN);
         // add components to panel
         panel.add(text1);
         panel.add(slider);
@@ -107,10 +111,10 @@ public class GUI extends JFrame {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         // process results
         if (result == JOptionPane.OK_OPTION) {
-            Settings.AI_DEPTH = difficultyMapping.get(slider.getValue());
-            logger.info("Selected AI depth = " + Settings.AI_DEPTH);
-            Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
-            Settings.FORCETAKES = forceTakesButton.isSelected();
+            GlobalSettings.AI_DEPTH = difficultyMapping.get(slider.getValue());
+            logger.info("Selected AI depth = " + GlobalSettings.AI_DEPTH);
+            GlobalSettings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
+            GlobalSettings.FORCETAKES = forceTakesButton.isSelected();
         } else {
             this.dispose();
             System.exit(0);
@@ -122,12 +126,12 @@ public class GUI extends JFrame {
      * Sets up initial GUI configuration.
      */
     public void setup() {
-        switch (Settings.FIRSTMOVE) {
+        switch (GlobalSettings.FIRSTMOVE) {
             case AI:
-                SettingsPanel.AIcolour = Colour.WHITE;
+                SettingsPanel.AIcolour = PieceColour.WHITE;
                 break;
             case HUMAN:
-                SettingsPanel.AIcolour = Colour.BLACK;
+                SettingsPanel.AIcolour = PieceColour.BLACK;
                 break;
         }
 
@@ -154,7 +158,7 @@ public class GUI extends JFrame {
         this.pack();
         this.setVisible(true);
         this.setResizable(false);
-        if (Settings.FIRSTMOVE == Player.AI) {
+        if (GlobalSettings.FIRSTMOVE == Player.AI) {
             aiMove();
         }
     }
@@ -270,6 +274,7 @@ public class GUI extends JFrame {
         JMenuItem rulesItem = new JMenuItem("Game Rules");
         JMenuItem helpItemHint = new JMenuItem("Hint!");
         JMenuItem helpItemMovables = new JMenuItem("Show movable pieces");
+        JMenuItem aboutItem = new JMenuItem("About");
 
         // add action listeners
         quitItem.addActionListener((e) -> onExitClick());
@@ -280,6 +285,7 @@ public class GUI extends JFrame {
         viewItemHintMode.addActionListener(e -> onHintModeClick());
         helpItemHint.addActionListener(e -> onHintClick());
         helpItemMovables.addActionListener(e -> onHelpMovablesClick());
+        aboutItem.addActionListener(e -> onAboutClick());
 
 
         // add components to menu bar
@@ -291,6 +297,7 @@ public class GUI extends JFrame {
         helpMenu.add(helpItemHint);
         helpMenu.add(helpItemMovables);
         helpMenu.add(rulesItem);
+        helpMenu.add(aboutItem);
         menuBar.add(fileMenu);
         menuBar.add(editMenu);
         menuBar.add(viewMenu);
@@ -351,7 +358,7 @@ public class GUI extends JFrame {
                 possibleMoves = game.getValidMoves(pos);
                 updateCheckerBoard();
                 if (possibleMoves.isEmpty()) {
-                    MoveFeedback feedback = game.moveFeedbackClick(pos);
+                    MoveFeedback feedback = game.moveFeedbackClick();
                     updateText(feedback.toString());
                     if (feedback == MoveFeedback.FORCED_JUMP) {
                         // show movable jump pieces
@@ -417,7 +424,7 @@ public class GUI extends JFrame {
      * Open dialog for restarting the program.
      */
     private void onRestartClick() {
-        Object[] options = {"Yes", "No"};
+        String[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this, "Are you sure you want to restart?",
                 "Restart game? ",
                 JOptionPane.YES_NO_OPTION,
@@ -426,7 +433,7 @@ public class GUI extends JFrame {
                 options,
                 options[1]);
         if (n == 0) {
-            start();
+            this.start();
         }
     }
 
@@ -434,7 +441,7 @@ public class GUI extends JFrame {
      * Open dialog for quitting the program
      */
     private void onExitClick() {
-        Object[] options = {"Yes", "No"};
+        String[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,
                 "\nAre you sure you want to leave?",
                 "Quit game? ",
@@ -475,6 +482,17 @@ public class GUI extends JFrame {
     private void onRulesClick() {
         JOptionPane.showMessageDialog(this,
                 "<html><body><p style='width: 400px;'>" + rulesList + "</p></body></html>",
+                "Game Rules",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void onAboutClick() {
+        JOptionPane.showMessageDialog(this,
+                "<html><body><p style='width: 400px;'>" +
+                        "<p>Checkers with AI</p>" +
+                        "<p>(c) 2018, by chris Mchristos </p>" +
+                        "<a href='https://github.com/mchristos/checkers'>https://github.com/mchristos/checkers</a>"
+                        + "</p></body></html>",
                 "Game Rules",
                 JOptionPane.INFORMATION_MESSAGE);
     }

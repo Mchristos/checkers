@@ -1,4 +1,4 @@
-package org.davistiba.game;
+package org.mchristos.game;
 
 public enum MoveFeedback {
     NOT_DIAGONAL("You can only move diagonally."),

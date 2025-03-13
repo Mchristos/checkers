@@ -1,4 +1,4 @@
-package org.davistiba.game;
+package org.mchristos.game;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -11,7 +11,7 @@ public class Game {
     private boolean humanWon;
 
     public Game() {
-        memory = Settings.UNDO_MEMORY;
+        memory = GlobalSettings.UNDO_MEMORY;
         state = new Stack<>();
         state.push(BoardState.initialState());
         ai = new AI();
@@ -65,7 +65,7 @@ public class Game {
         return MoveFeedback.UNKNOWN_INVALID;
     }
 
-    public MoveFeedback moveFeedbackClick(int pos) {
+    public MoveFeedback moveFeedbackClick() {
         ArrayList<BoardState> jumpSuccessors = this.state.peek().getSuccessors(true);
         if (!jumpSuccessors.isEmpty()) {
             return MoveFeedback.FORCED_JUMP;
