@@ -13,7 +13,7 @@ public class AI {
     private static final Logger logger = Logger.getLogger(String.valueOf(AI.class));
 
     public AI() {
-        depth = Settings.AI_DEPTH;
+        depth = GlobalSettings.AI_DEPTH;
         player = Player.AI;
     }
 
@@ -96,9 +96,9 @@ public class AI {
      * Implements the minimax algorithm with alpha-beta pruning
      *
      * @param node current node
-     * @param depth param alpha
-     * @param alpha param alpha
-     * @param beta param beta
+     * @param depth
+     * @param alpha
+     * @param beta
      * @return best result
      */
     private int minimax(BoardState node, int depth, int alpha, int beta) {

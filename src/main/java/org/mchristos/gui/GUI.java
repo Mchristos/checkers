@@ -91,15 +91,15 @@ public class GUI extends JFrame {
         slider.setValue(3);
         // force takes option
         JRadioButton forceTakesButton = new JRadioButton("Force Takes");
-        forceTakesButton.setSelected(Settings.FORCETAKES);
+        forceTakesButton.setSelected(GlobalSettings.FORCETAKES);
         // who gets first move?
         ButtonGroup buttonGroup = new ButtonGroup();
         JRadioButton humanFirstRadioButton = new JRadioButton("You Play First");
         JRadioButton aiRadioButton = new JRadioButton("Computer Plays First");
         buttonGroup.add(humanFirstRadioButton);
         buttonGroup.add(aiRadioButton);
-        aiRadioButton.setSelected(Settings.FIRSTMOVE == Player.AI);
-        humanFirstRadioButton.setSelected(Settings.FIRSTMOVE == Player.HUMAN);
+        aiRadioButton.setSelected(GlobalSettings.FIRSTMOVE == Player.AI);
+        humanFirstRadioButton.setSelected(GlobalSettings.FIRSTMOVE == Player.HUMAN);
         // add components to panel
         panel.add(text1);
         panel.add(slider);
@@ -111,10 +111,10 @@ public class GUI extends JFrame {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         // process results
         if (result == JOptionPane.OK_OPTION) {
-            Settings.AI_DEPTH = difficultyMapping.get(slider.getValue());
-            logger.info("Selected AI depth = " + Settings.AI_DEPTH);
-            Settings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
-            Settings.FORCETAKES = forceTakesButton.isSelected();
+            GlobalSettings.AI_DEPTH = difficultyMapping.get(slider.getValue());
+            logger.info("Selected AI depth = " + GlobalSettings.AI_DEPTH);
+            GlobalSettings.FIRSTMOVE = humanFirstRadioButton.isSelected() ? Player.HUMAN : Player.AI;
+            GlobalSettings.FORCETAKES = forceTakesButton.isSelected();
         } else {
             this.dispose();
             System.exit(0);
@@ -126,7 +126,7 @@ public class GUI extends JFrame {
      * Sets up initial GUI configuration.
      */
     public void setup() {
-        switch (Settings.FIRSTMOVE) {
+        switch (GlobalSettings.FIRSTMOVE) {
             case AI:
                 SettingsPanel.AIcolour = PieceColour.WHITE;
                 break;
@@ -158,7 +158,7 @@ public class GUI extends JFrame {
         this.pack();
         this.setVisible(true);
         this.setResizable(false);
-        if (Settings.FIRSTMOVE == Player.AI) {
+        if (GlobalSettings.FIRSTMOVE == Player.AI) {
             aiMove();
         }
     }

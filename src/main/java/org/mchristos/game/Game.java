@@ -11,7 +11,7 @@ public class Game {
     private boolean humanWon;
 
     public Game() {
-        memory = Settings.UNDO_MEMORY;
+        memory = GlobalSettings.UNDO_MEMORY;
         state = new Stack<>();
         state.push(BoardState.initialState());
         ai = new AI();

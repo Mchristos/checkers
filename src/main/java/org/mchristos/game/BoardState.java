@@ -32,7 +32,7 @@ public class BoardState {
      */
     public static BoardState initialState() {
         BoardState bs = new BoardState();
-        bs.turn = Settings.FIRSTMOVE;
+        bs.turn = GlobalSettings.FIRSTMOVE;
         for (int i = 0; i < bs.state.length; i++) {
             int y = i / SIDE_LENGTH;
             int x = i % SIDE_LENGTH;
@@ -73,7 +73,7 @@ public class BoardState {
      * @return level
      */
     public int computeHeuristic(Player player) {
-        switch (Settings.HEURISTIC) {
+        switch (GlobalSettings.HEURISTIC) {
             case 1:
                 return heuristic1(player);
             case 2:
@@ -122,7 +122,7 @@ public class BoardState {
     public ArrayList<BoardState> getSuccessors() {
         // compute jump successors
         ArrayList<BoardState> successors = getSuccessors(true);
-        if (Settings.FORCETAKES) {
+        if (GlobalSettings.FORCETAKES) {
             if (!successors.isEmpty()) {
                 // return only jump successors if available (forced)
                 return successors;
@@ -162,7 +162,7 @@ public class BoardState {
      * @return list of allowable states
      */
     public ArrayList<BoardState> getSuccessors(int position) {
-        if (Settings.FORCETAKES) {
+        if (GlobalSettings.FORCETAKES) {
             // compute jump successors GLOBALLY
             ArrayList<BoardState> jumps = getSuccessors(true);
             if (!jumps.isEmpty()) {
