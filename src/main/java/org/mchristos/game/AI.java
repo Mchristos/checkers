@@ -79,7 +79,7 @@ public class AI {
     /**
      * Implements the minimax algorithm with alpha-beta pruning
      *
-     * @param node current
+     * @param node  current
      * @param depth how deep should algorithm go
      * @return best optimal result
      */
@@ -95,7 +95,7 @@ public class AI {
     /**
      * Implements the minimax algorithm with alpha-beta pruning
      *
-     * @param node current node
+     * @param node  current node
      * @param depth
      * @param alpha
      * @param beta
