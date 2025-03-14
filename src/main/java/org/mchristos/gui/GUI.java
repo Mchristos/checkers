@@ -17,6 +17,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * The main game window
+ */
 public class GUI extends JFrame {
 
     private Game game;
@@ -128,7 +131,7 @@ public class GUI extends JFrame {
     public void setup() {
         switch (GlobalSettings.FIRSTMOVE) {
             case AI:
-                SettingsPanel.AIcolour = PieceColour.WHITE;
+                SettingsPanel.AIcolour = PieceColour.RED;
                 break;
             case HUMAN:
                 SettingsPanel.AIcolour = PieceColour.BLACK;

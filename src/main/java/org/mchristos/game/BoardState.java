@@ -185,7 +185,7 @@ public class BoardState {
      * Get valid jump or non-jump successor states for a specific piece on the board.
      *
      * @param position target position
-     * @param jump must jump?
+     * @param jump     must jump?
      * @return valid states
      */
     public ArrayList<BoardState> getSuccessors(int position, boolean jump) {
@@ -203,7 +203,7 @@ public class BoardState {
     /**
      * Gets valid non-jump moves at a given position for a given piece
      *
-     * @param piece current piece
+     * @param piece    current piece
      * @param position target position
      * @return list of valid states
      */
@@ -232,7 +232,7 @@ public class BoardState {
     /**
      * Gets valid jump moves at a given position for a given piece
      *
-     * @param piece current piece
+     * @param piece    current piece
      * @param position target position
      * @return list of valid states
      */

@@ -4,7 +4,7 @@ import org.mchristos.game.Player;
 
 public class SettingsPanel {
 
-    public static PieceColour AIcolour = PieceColour.BLACK; // Note: starting player gets white pieces
+    public static PieceColour AIcolour = PieceColour.BLACK; // Note: starting player gets RED pieces
     public static boolean helpMode = true;
     public static boolean hintMode = false;
     public static boolean dragDrop = false;
