@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Black or white checker piece (clickable button component)
@@ -23,12 +24,14 @@ public class CheckerButton extends JButton {
     private final Piece piece;
     private static final Border YELLOW_BORDER = BorderFactory.createLineBorder(Color.YELLOW, 2);
     private static final Border EMPTY_BORDER = BorderFactory.createEmptyBorder();
+    private static final ConcurrentHashMap<String, URL> imageCache = new ConcurrentHashMap<>(); // Cache for images
 
-    // drag drop
-    int X;
-    int Y;
-    int screenX = 0;
-    int screenY = 0;
+
+    // for drag drop
+    private int X;
+    private int Y;
+    private int screenX = 0;
+    private int screenY = 0;
 
     public CheckerButton(int position, Piece piece, GUI gui) {
         super();
@@ -112,10 +115,15 @@ public class CheckerButton extends JButton {
      * Reads image from `resources` folder
      *
      * @param fileName name of file
-     * @return InputStream of data
+     * @return URL of filename
      */
     protected static URL getImageResource(final String fileName) {
-        return CheckerButton.class.getClassLoader().getResource(fileName);
+        // Check if image is in cache
+        if (!imageCache.containsKey(fileName)) {
+            URL resourceUrl = CheckerButton.class.getClassLoader().getResource(fileName);
+            imageCache.put(fileName, resourceUrl); // Add to cache
+        }
+        return imageCache.get(fileName);
     }
 
     private void setCustomIcon(Piece piece) {
